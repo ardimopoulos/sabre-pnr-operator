@@ -5,28 +5,32 @@ import com.sabre.web_services.message_header.MessageHeader;
 import com.sabre.web_services.sessionCreate.sessionCreateRQ.SessionCreateRQ;
 import com.sabre.web_services.sessionCreate.sessionCreateRS.SessionCreateRS;
 import com.sabre.web_services.wsse.Security;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.ws.soap.SoapHeader;
 import org.springframework.ws.soap.SoapMessage;
 import org.springframework.ws.support.MarshallingUtils;
 
+import static com.sabre.pnrretriever.config.properties.ResultProperties.APPROVED;
+import static com.sabre.pnrretriever.config.properties.ResultProperties.ERROR;
 import static com.sabre.pnrretriever.headers.message_header.Action.SESSION_CREATE;
 
 @Component
+@Slf4j
 public class SessionCreateHandler extends AbstractHandler {
 
-    private SoapMessage soapResponse;
-
     public Response processRequest() {
+        log.info("SessionCreate request process is starting...");
         SessionCreateRS sessionCreateRS;
 
         try {
-            soapResponse = sendAndReceive(getSessionCreateRQ());
+            SoapMessage soapResponse = sendAndReceive(getSessionCreateRQ());
 
             sessionCreateRS = (SessionCreateRS) webServiceTemplate.getUnmarshaller()
                     .unmarshal(soapResponse.getPayloadSource());
 
-            if (!"Approved".equals(sessionCreateRS.getStatus())) {
+            if (!APPROVED.equals(sessionCreateRS.getStatus())) {
+                log.error("Status returned from the web service response is different than Approved.");
                 return getFaultyResponse(sessionCreateRS.getStatus(),
                         messages.getProperty("session.create.disapproved"),
                         messages.getProperty("session.error.status")
@@ -36,12 +40,14 @@ public class SessionCreateHandler extends AbstractHandler {
             MessageHeader messageHeader = (MessageHeader) getHeaderElement(soapResponse.getSoapHeader(), MessageHeader.class);
 
             if (!headerProperties.getConversationId().equals(messageHeader.getConversationId())) {
+                log.error("SessionCreate response returned a different ConversationId.");
                 return getFaultyResponse(sessionCreateRS.getStatus(),
                         messages.getProperty("error.desc"),
                         messages.getProperty("error.convId"));
             }
 
             if (!headerProperties.getCpaid().equals(messageHeader.getCPAId())) {
+                log.error("SessionCreate response returned a different CPAId.");
                 return getFaultyResponse(sessionCreateRS.getStatus(),
                         messages.getProperty("error.desc"),
                         messages.getProperty("error.cpaid"));
@@ -51,10 +57,12 @@ public class SessionCreateHandler extends AbstractHandler {
             securityRq.setToken(securityHeader.getBinarySecurityToken());
 
         } catch (Exception e) {
-            System.out.println("Exception while opening session: " + e);
-            return getFaultyResponse("error", messages.getProperty("session.error.open"),
+            log.error("Exception while opening session: " + e);
+            return getFaultyResponse(ERROR, messages.getProperty("session.error.open"),
                         messages.getProperty("error.general") + e.getMessage());
         }
+
+        log.info("Successfully retrieved SessionCreate Response.");
 
         return getSuccessfulResponse(sessionCreateRS.getStatus(), messages.getProperty("session.open.success"),
                 messages.getProperty("session.approved"));
