@@ -8,8 +8,6 @@ import org.springframework.stereotype.Component;
 
 import java.time.Clock;
 
-import static com.sabre.pnrretriever.headers.message_header.Action.SESSION_CREATE;
-
 @Component
 public class MessageHeaderRqImpl implements MessageHeaderRq {
 
@@ -26,12 +24,10 @@ public class MessageHeaderRqImpl implements MessageHeaderRq {
         messageHeader.setTo(getToHeaderElement());
         messageHeader.setMessageData(getMessageDataHeaderElement());
 
-        if (action == SESSION_CREATE) {
-            Service service = new Service();
-            service.setValue(SESSION_CREATE.getValue());
-            service.setType("SabreXML");
-            messageHeader.setService(service);
-        }
+        Service service = new Service();
+        service.setValue(action.getValue());
+        service.setType("SabreXML");
+        messageHeader.setService(service);
 
         return messageHeader;
     }

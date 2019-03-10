@@ -28,7 +28,9 @@ public class BeanConfiguration {
                                  path + ".sessionCreate.sessionCreateRQ",
                                  path + ".sessionCreate.sessionCreateRS",
                                  path + ".sessionClose.sessionCloseRQ",
-                                 path + ".sabreCommandLLS1_8_1.sabreCommandLLS1_8_1RQ"
+                                 path + ".sessionClose.sessionCloseRS",
+                                 path + ".sabreCommandLLS1_8_1.sabreCommandLLS1_8_1RQ",
+                                 path + ".sabreCommandLLS1_8_1.sabreCommandLLS1_8_1RS"
                                  );
         return marshaller;
     }

@@ -6,7 +6,7 @@ public enum Action {
 
     SESSION_CREATE("SessionCreateRQ"),
     SESSION_CLOSE("SessionCloseRQ"),
-    SABRE_COMMAND_LLS("SabreCommandLLS");
+    SABRE_COMMAND_LLS("SabreCommandLLSRQ");
 
     @Getter
     private String value;
