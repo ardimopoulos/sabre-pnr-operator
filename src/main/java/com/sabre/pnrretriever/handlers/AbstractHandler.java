@@ -74,4 +74,5 @@ public abstract class AbstractHandler extends WebServiceGatewaySupport implement
                 .setMessage(message)
                 .setTimestamp(LocalDateTime.now());
     }
+
 }

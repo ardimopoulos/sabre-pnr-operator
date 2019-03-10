@@ -2,6 +2,7 @@ package com.sabre.pnrretriever.headers.security_header;
 
 import com.sabre.pnrretriever.config.properties.HeaderProperties;
 import com.sabre.web_services.wsse.Security;
+import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,6 +21,7 @@ public class SecurityRq {
     private String password;
 
     @Setter
+    @Getter
     private String token;
 
     public Security getSessionSecurityHeader() {
