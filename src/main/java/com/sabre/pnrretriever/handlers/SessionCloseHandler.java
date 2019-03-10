@@ -4,29 +4,33 @@ import com.sabre.pnrretriever.responses.Response;
 import com.sabre.web_services.message_header.MessageHeader;
 import com.sabre.web_services.sessionClose.sessionCloseRQ.SessionCloseRQ;
 import com.sabre.web_services.sessionClose.sessionCloseRS.SessionCloseRS;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.ws.soap.SoapHeader;
 import org.springframework.ws.soap.SoapMessage;
 import org.springframework.ws.support.MarshallingUtils;
 
+import static com.sabre.pnrretriever.config.properties.ResultProperties.APPROVED;
+import static com.sabre.pnrretriever.config.properties.ResultProperties.ERROR;
 import static com.sabre.pnrretriever.headers.message_header.Action.SESSION_CLOSE;
 
 @Component
+@Slf4j
 public class SessionCloseHandler extends AbstractHandler {
-
-    private SoapMessage soapResponse;
 
     @Override
     public Response processRequest() {
+        log.info("SessionClose request process is starting...");
         SessionCloseRS sessionCloseRS;
 
         try {
-            soapResponse = sendAndReceive(getSessionCloseRQ());
+            SoapMessage soapResponse = sendAndReceive(getSessionCloseRQ());
 
             sessionCloseRS = (SessionCloseRS) webServiceTemplate.getUnmarshaller()
                     .unmarshal(soapResponse.getPayloadSource());
 
-            if (!"Approved".equals(sessionCloseRS.getStatus())) {
+            if (!APPROVED.equals(sessionCloseRS.getStatus())) {
+                log.error("Status returned from the web service response is different than Approved.");
                 return getFaultyResponse(sessionCloseRS.getStatus(),
                         messages.getProperty("session.close.disapproved"),
                         messages.getProperty("session.error.status")
@@ -36,22 +40,26 @@ public class SessionCloseHandler extends AbstractHandler {
             MessageHeader messageHeader = (MessageHeader) getHeaderElement(soapResponse.getSoapHeader(), MessageHeader.class);
 
             if (!headerProperties.getConversationId().equals(messageHeader.getConversationId())) {
+                log.error("SessionClose response returned a different ConversationId.");
                 return getFaultyResponse(sessionCloseRS.getStatus(),
                         messages.getProperty("error.desc"),
                         messages.getProperty("error.convId"));
             }
 
             if (!headerProperties.getCpaid().equals(messageHeader.getCPAId())) {
+                log.error("SessionClose response returned a different CPAId.");
                 return getFaultyResponse(sessionCloseRS.getStatus(),
                         messages.getProperty("error.desc"),
                         messages.getProperty("error.cpaid"));
             }
 
         } catch (Exception e) {
-            System.out.println(e.getMessage());
-            return getFaultyResponse("error", messages.getProperty("session.error.close"),
+            log.error("Exception while closing session: " + e);
+            return getFaultyResponse(ERROR, messages.getProperty("session.error.close"),
                     messages.getProperty("error.general") + e.getMessage());
         }
+
+        log.info("Successfully retrieved SessionCLose Response.");
 
         return getSuccessfulResponse(sessionCloseRS.getStatus(), messages.getProperty("session.close.success"),
                 messages.getProperty("session.approved"));
@@ -78,6 +86,4 @@ public class SessionCloseHandler extends AbstractHandler {
         sessionCloseRQ.setPOS(pos);
         return sessionCloseRQ;
     }
-
-
 }

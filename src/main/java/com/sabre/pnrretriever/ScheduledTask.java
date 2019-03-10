@@ -7,11 +7,13 @@ import com.sabre.pnrretriever.handlers.SessionCreateHandler;
 import com.sabre.pnrretriever.headers.message_header.Action;
 import com.sabre.pnrretriever.responses.Response;
 import com.sabre.pnrretriever.rest.ApiResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
+@Slf4j
 public class ScheduledTask {
 
     @Autowired
@@ -36,7 +38,7 @@ public class ScheduledTask {
 
     @Scheduled(cron = "${execute.time}")
     private void runTask() {
-        System.out.println("Running Task...");
+        log.info("Start running task...");
 
         try {
             System.out.println(Action.SESSION_CREATE.getValue());
@@ -58,10 +60,10 @@ public class ScheduledTask {
             apiResponse.getApiResponse().put("session-close", sessionCloseResponse);
 
         } catch (Exception e) {
-            System.out.println(e);
+            log.error("Exception while executing scheduled task: " + e);
         }
 
-        System.out.println("Task finished");
+        log.info("Scheduled task is finished.");
     }
 
 }

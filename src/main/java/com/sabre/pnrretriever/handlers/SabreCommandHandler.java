@@ -6,6 +6,7 @@ import com.sabre.web_services.sabreCommandLLS1_8_1.sabreCommandLLS1_8_1RQ.SabreC
 import com.sabre.web_services.sabreCommandLLS1_8_1.sabreCommandLLS1_8_1RS.SabreCommandLLSRS;
 import com.sabre.web_services.wsse.Security;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.ws.soap.SoapHeader;
 import org.springframework.ws.soap.SoapMessage;
@@ -13,9 +14,11 @@ import org.springframework.ws.support.MarshallingUtils;
 
 import java.time.LocalDateTime;
 
+import static com.sabre.pnrretriever.config.properties.ResultProperties.*;
 import static com.sabre.pnrretriever.headers.message_header.Action.SABRE_COMMAND_LLS;
 
 @Component
+@Slf4j
 public class SabreCommandHandler extends AbstractHandler {
 
     private SoapMessage soapResponse;
@@ -25,6 +28,7 @@ public class SabreCommandHandler extends AbstractHandler {
 
     @Override
     public Response processRequest() {
+        log.info("SessionCommandLLS request is starting for command " + command + "...");
         SabreCommandLLSRS sabreCommandLLSRS;
 
         try {
@@ -36,29 +40,34 @@ public class SabreCommandHandler extends AbstractHandler {
             MessageHeader messageHeader = (MessageHeader) getHeaderElement(soapResponse.getSoapHeader(), MessageHeader.class);
 
             if (!headerProperties.getConversationId().equals(messageHeader.getConversationId())) {
-                return getFaultyResponse("fail", messages.getProperty("error.desc"),
+                log.error("SessionClose response returned a different ConversationId.");
+                return getFaultyResponse(FAIL, messages.getProperty("error.desc"),
                         messages.getProperty("error.convId"));
             }
 
             if (!headerProperties.getCpaid().equals(messageHeader.getCPAId())) {
-                return getFaultyResponse("fail", messages.getProperty("error.desc"),
+                log.error("SessionClose response returned a different CPAId.");
+                return getFaultyResponse(FAIL, messages.getProperty("error.desc"),
                         messages.getProperty("error.cpaid"));
             }
 
             Security security = (Security) getHeaderElement(soapResponse.getSoapHeader(), Security.class);
 
             if (!securityRq.getToken().equals(security.getBinarySecurityToken())) {
-                return getFaultyResponse("fail", messages.getProperty("error.desc"),
+                log.error("SessionClose response returned a different token");
+                return getFaultyResponse(FAIL, messages.getProperty("error.desc"),
                         messages.getProperty("error.token"));
             }
 
         } catch (Exception e) {
-            System.out.println("Exception while executing sabre command:" + e.getMessage());
-            return getFaultyResponse("error", messages.getProperty("command.error") + ":" + command,
+            log.error("Exception while executing sabre command" + command + ":" + e.getMessage());
+            return getFaultyResponse(ERROR, messages.getProperty("command.error") + ":" + command,
                     messages.getProperty("error.general") + e.getMessage());
         }
 
-        return getSuccessfulResponse("success", messages.getProperty("command.success"),
+        log.info("Successfully retrieved SabreCommand (" + command + ") Response.");
+
+        return getSuccessfulResponse(SUCCESS, messages.getProperty("command.success"),
                 sabreCommandLLSRS.getResponse());
     }
 

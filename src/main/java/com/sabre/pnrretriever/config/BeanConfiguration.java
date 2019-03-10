@@ -24,14 +24,13 @@ public class BeanConfiguration {
     public Jaxb2Marshaller marshaller() {
         Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
         marshaller.setContextPaths(path + ".message_header",
-                                 path + ".wsse",
-                                 path + ".sessionCreate.sessionCreateRQ",
-                                 path + ".sessionCreate.sessionCreateRS",
-                                 path + ".sessionClose.sessionCloseRQ",
-                                 path + ".sessionClose.sessionCloseRS",
-                                 path + ".sabreCommandLLS1_8_1.sabreCommandLLS1_8_1RQ",
-                                 path + ".sabreCommandLLS1_8_1.sabreCommandLLS1_8_1RS"
-                                 );
+                                   path + ".wsse",
+                                   path + ".sessionCreate.sessionCreateRQ",
+                                   path + ".sessionCreate.sessionCreateRS",
+                                   path + ".sessionClose.sessionCloseRQ",
+                                   path + ".sessionClose.sessionCloseRS",
+                                   path + ".sabreCommandLLS1_8_1.sabreCommandLLS1_8_1RQ",
+                                   path + ".sabreCommandLLS1_8_1.sabreCommandLLS1_8_1RS");
         return marshaller;
     }
 
