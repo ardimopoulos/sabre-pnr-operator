@@ -11,7 +11,6 @@ import org.springframework.ws.soap.SoapMessage;
 import org.springframework.ws.support.MarshallingUtils;
 
 import static com.sabre.pnrretriever.headers.message_header.Action.SESSION_CREATE;
-import static java.util.Objects.isNull;
 
 @Component
 public class SessionCreateHandler extends AbstractHandler {
@@ -29,7 +28,7 @@ public class SessionCreateHandler extends AbstractHandler {
 
             if (!"Approved".equals(sessionCreateRS.getStatus())) {
                 return getFaultyResponse(sessionCreateRS.getStatus(),
-                        messages.getProperty("session.desc.disapproved"),
+                        messages.getProperty("session.create.disapproved"),
                         messages.getProperty("session.error.status")
                 );
             }
@@ -38,14 +37,14 @@ public class SessionCreateHandler extends AbstractHandler {
 
             if (!headerProperties.getConversationId().equals(messageHeader.getConversationId())) {
                 return getFaultyResponse(sessionCreateRS.getStatus(),
-                        messages.getProperty("session.error.desc"),
-                        messages.getProperty("session.error.convId"));
+                        messages.getProperty("error.desc"),
+                        messages.getProperty("error.convId"));
             }
 
             if (!headerProperties.getCpaid().equals(messageHeader.getCPAId())) {
                 return getFaultyResponse(sessionCreateRS.getStatus(),
-                        messages.getProperty("session.error.desc"),
-                        messages.getProperty("session.error.cpaid"));
+                        messages.getProperty("error.desc"),
+                        messages.getProperty("error.cpaid"));
             }
 
             Security securityHeader = (Security) getHeaderElement(soapResponse.getSoapHeader(), Security.class);
@@ -53,21 +52,11 @@ public class SessionCreateHandler extends AbstractHandler {
 
         } catch (Exception e) {
             System.out.println("Exception while opening session: " + e);
-
-            Response response;
-
-            if (!isNull(soapResponse) && soapResponse.getSoapBody().hasFault()) {
-                response =  getFaultyResponse(soapResponse.getSoapBody().getFault());
-
-            } else {
-                response = getFaultyResponse("error", messages.getProperty("session.error.open"),
-                        messages.getProperty("session.error.general") + e.getMessage());
-            }
-
-            return response;
+            return getFaultyResponse("error", messages.getProperty("session.error.open"),
+                        messages.getProperty("error.general") + e.getMessage());
         }
 
-        return getSuccessfulResponse(sessionCreateRS.getStatus(), messages.getProperty("session.success"),
+        return getSuccessfulResponse(sessionCreateRS.getStatus(), messages.getProperty("session.open.success"),
                 messages.getProperty("session.approved"));
     }
 
