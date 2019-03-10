@@ -72,19 +72,6 @@
 				<security.password>869120</security.password>
 			</properties>
 		</profile>
-		<profile>
-			<id>prod</id>
-			<activation>
-				<activeByDefault>false</activeByDefault>
-			</activation>
-			<properties>
-				<service.endpoint>https://webservices.havail.sabre.com</service.endpoint>
-				<execute.time>0 0 18 * * *</execute.time>
-				<header.cpaid>0QER</header.cpaid>
-				<security.username>869120</security.username>
-				<security.password>869120</security.password>
-			</properties>
-		</profile>
 	</profiles>
 	<build>
 		<finalName>${artifactId}</finalName>
