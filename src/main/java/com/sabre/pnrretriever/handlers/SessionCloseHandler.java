@@ -50,7 +50,7 @@ public class SessionCloseHandler extends AbstractHandler {
         } catch (Exception e) {
             System.out.println(e.getMessage());
             return getFaultyResponse("error", messages.getProperty("session.error.close"),
-                    messages.getProperty("error.general"));
+                    messages.getProperty("error.general") + e.getMessage());
         }
 
         return getSuccessfulResponse(sessionCloseRS.getStatus(), messages.getProperty("session.close.success"),

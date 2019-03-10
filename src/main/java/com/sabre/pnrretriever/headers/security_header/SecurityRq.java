@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import static java.util.Objects.isNull;
+
 @Component
 public class SecurityRq {
 
@@ -39,5 +41,9 @@ public class SecurityRq {
         Security security = new Security();
         security.setBinarySecurityToken(token);
         return security;
+    }
+
+    public boolean isTokenEmpty() {
+        return isNull(token) || token.isEmpty();
     }
 }

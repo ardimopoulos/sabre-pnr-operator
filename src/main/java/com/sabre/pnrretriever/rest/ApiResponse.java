@@ -20,20 +20,4 @@ public class ApiResponse {
     private void intialize() {
         apiResponse = new LinkedHashMap<>();
     }
-
-//    @JsonProperty("session-create")
-//    private Response sessionCreateResponse;
-//
-//    @JsonProperty("sabre-command-lls")
-//    private Response sabreCommandResponse;
-//
-//    @JsonProperty("session-close")
-//    private Response sessionCloseResponse;
-//
-//    @PostConstruct
-//    void initializeResponse() {
-//        sessionCloseResponse = new Response().setStatus("pending").setDescription("pending").setMessage("pending");
-//        sessionCreateResponse = new Response().setStatus("pending").setDescription("pending").setMessage("pending");
-//        sabreCommandResponse = new Response().setStatus("pending").setDescription("pending").setMessage("pending");
-//    }
 }

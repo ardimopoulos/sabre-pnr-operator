@@ -4,12 +4,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.ws.client.core.WebServiceTemplate;
 
 import java.io.IOException;
 import java.util.Properties;
 
 @Configuration
+@EnableScheduling
 public class BeanConfiguration {
 
     @Value(value = "${webservices.path}")
@@ -21,8 +23,7 @@ public class BeanConfiguration {
     @Bean
     public Jaxb2Marshaller marshaller() {
         Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
-        marshaller
-                .setContextPaths(path + ".message_header",
+        marshaller.setContextPaths(path + ".message_header",
                                  path + ".wsse",
                                  path + ".sessionCreate.sessionCreateRQ",
                                  path + ".sessionCreate.sessionCreateRS",
@@ -38,7 +39,6 @@ public class BeanConfiguration {
         webServiceTemplate.setMarshaller(marshaller());
         webServiceTemplate.setUnmarshaller(marshaller());
         webServiceTemplate.setDefaultUri(endpoint);
-        System.out.println(endpoint);
         return webServiceTemplate;
     }
 
