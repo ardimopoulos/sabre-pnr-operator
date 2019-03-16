@@ -11,8 +11,7 @@ import org.springframework.ws.soap.SoapHeader;
 import org.springframework.ws.soap.SoapMessage;
 import org.springframework.ws.support.MarshallingUtils;
 
-import static com.sabre.pnrretriever.config.properties.ResultProperties.APPROVED;
-import static com.sabre.pnrretriever.config.properties.ResultProperties.ERROR;
+import static com.sabre.pnrretriever.config.properties.ResultProperties.*;
 import static com.sabre.pnrretriever.headers.message_header.Action.SESSION_CREATE;
 
 @Component
@@ -55,6 +54,12 @@ public class SessionCreateHandler extends AbstractHandler {
 
             Security securityHeader = (Security) getHeaderElement(soapResponse.getSoapHeader(), Security.class);
             securityRq.setToken(securityHeader.getBinarySecurityToken());
+
+            if (securityRq.isTokenEmpty()) {
+                log.error("Security header does not contain token.");
+                return getFaultyResponse(FAIL, messages.getProperty("error.desc"),
+                        messages.getProperty("error.token.empty"));
+            }
 
         } catch (Exception e) {
             log.error("Exception while opening session: " + e);
