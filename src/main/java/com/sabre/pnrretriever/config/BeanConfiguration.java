@@ -1,15 +1,19 @@
 package com.sabre.pnrretriever.config;
 
+import com.sabre.pnrretriever.interceptor.SoapClientInterceptor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.ws.client.core.WebServiceTemplate;
+import org.springframework.ws.client.support.interceptor.ClientInterceptor;
+import org.springframework.ws.config.annotation.EnableWs;
 
 import java.io.IOException;
 import java.util.Properties;
 
+@EnableWs
 @Configuration
 @EnableScheduling
 public class BeanConfiguration {
@@ -40,6 +44,8 @@ public class BeanConfiguration {
         webServiceTemplate.setMarshaller(marshaller());
         webServiceTemplate.setUnmarshaller(marshaller());
         webServiceTemplate.setDefaultUri(endpoint);
+        ClientInterceptor[] clientInterceptors = {new SoapClientInterceptor()};
+        webServiceTemplate.setInterceptors(clientInterceptors);
         return webServiceTemplate;
     }
 
