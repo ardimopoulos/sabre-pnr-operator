@@ -21,7 +21,7 @@ public class SoapClientInterceptor implements ClientInterceptor {
 
     @Override
     public boolean handleResponse(MessageContext messageContext) throws WebServiceClientException {
-        log.info("Response: " + Utilities.getSOAPMessageAsString((SOAPMessage) messageContext));
+        log.info("Response: " + Utilities.getSOAPMessageAsString((SOAPMessage) messageContext.getResponse()));
         return true;
     }
 
