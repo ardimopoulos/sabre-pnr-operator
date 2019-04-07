@@ -8,12 +8,10 @@ import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.ws.client.core.WebServiceTemplate;
 import org.springframework.ws.client.support.interceptor.ClientInterceptor;
-import org.springframework.ws.config.annotation.EnableWs;
 
 import java.io.IOException;
 import java.util.Properties;
 
-@EnableWs
 @Configuration
 @EnableScheduling
 public class BeanConfiguration {
@@ -55,5 +53,6 @@ public class BeanConfiguration {
         messages.load(getClass().getClassLoader().getResourceAsStream("messages.properties"));
         return messages;
     }
+
 
 }

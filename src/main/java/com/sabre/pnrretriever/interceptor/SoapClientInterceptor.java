@@ -1,27 +1,25 @@
 package com.sabre.pnrretriever.interceptor;
 
-import com.sabre.pnrretriever.utils.Utilities;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 import org.springframework.ws.client.WebServiceClientException;
 import org.springframework.ws.client.support.interceptor.ClientInterceptor;
 import org.springframework.ws.context.MessageContext;
+import org.springframework.ws.soap.SoapMessage;
 
-import javax.xml.soap.SOAPMessage;
+import static com.sabre.pnrretriever.utils.Utilities.getSOAPMessageAsString;
 
 @Slf4j
-@Component
 public class SoapClientInterceptor implements ClientInterceptor {
 
     @Override
     public boolean handleRequest(MessageContext messageContext) throws WebServiceClientException {
-        log.info("Request: " + Utilities.getSOAPMessageAsString((SOAPMessage) messageContext.getRequest()));
+        log.info("Request: " + getSOAPMessageAsString((SoapMessage) messageContext.getRequest()));
         return true;
     }
 
     @Override
     public boolean handleResponse(MessageContext messageContext) throws WebServiceClientException {
-        log.info("Response: " + Utilities.getSOAPMessageAsString((SOAPMessage) messageContext.getResponse()));
+        log.info("Response: " + getSOAPMessageAsString((SoapMessage) messageContext.getResponse()));
         return true;
     }
 
