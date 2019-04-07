@@ -14,10 +14,10 @@ import java.util.Map;
 public class ApiResponse {
 
     @JsonProperty("scheduled-task")
-    Map<String, Response> apiResponse;
+    Map<String, Response> scheduledTask;
 
     @PostConstruct
     private void intialize() {
-        apiResponse = new LinkedHashMap<>();
+        scheduledTask = new LinkedHashMap<>();
     }
 }

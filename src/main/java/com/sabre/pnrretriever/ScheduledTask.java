@@ -30,7 +30,6 @@ public class ScheduledTask {
     @Autowired
     private ApiResponse apiResponse;
 
-    private Response sessionCreateResponse;
     private Response sessionCloseResponse;
     private Response dxStatusResponse;
     private Response dxTransmitResponse;
@@ -40,7 +39,7 @@ public class ScheduledTask {
         log.info("Start running task...");
 
         try {
-            sessionCreateResponse = sessionCreateHandler.processRequest();
+            Response sessionCreateResponse = sessionCreateHandler.processRequest();
 
             if (sessionCreateResponse.isSuccess()) {
                 sabreCommandHandler.setCommand("DX STATUS");
@@ -52,10 +51,10 @@ public class ScheduledTask {
                 sessionCloseResponse = sessionCloseHandler.processRequest();
             }
 
-            apiResponse.getApiResponse().put("session-create", sessionCreateResponse);
-            apiResponse.getApiResponse().put("dx-status", dxStatusResponse);
-            apiResponse.getApiResponse().put("dx-transmit", dxTransmitResponse);
-            apiResponse.getApiResponse().put("session-close", sessionCloseResponse);
+            apiResponse.getScheduledTask().put("session-create", sessionCreateResponse);
+            apiResponse.getScheduledTask().put("dx-status", dxStatusResponse);
+            apiResponse.getScheduledTask().put("dx-transmit", dxTransmitResponse);
+            apiResponse.getScheduledTask().put("session-close", sessionCloseResponse);
 
         } catch (Exception e) {
             log.error("Exception while executing scheduled task: " + e);

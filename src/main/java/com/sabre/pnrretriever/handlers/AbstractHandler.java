@@ -33,9 +33,6 @@ public abstract class AbstractHandler extends WebServiceGatewaySupport implement
     @Autowired
     Properties messages;
 
-    @Override
-    public abstract Response processRequest();
-
     Object getHeaderElement(SoapHeader header, Class className) throws IOException {
         Object headerElement = null;
 

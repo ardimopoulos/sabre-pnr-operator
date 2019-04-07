@@ -41,14 +41,14 @@ public class SessionCreateHandler extends AbstractHandler {
             if (!headerProperties.getConversationId().equals(messageHeader.getConversationId())) {
                 log.error("SessionCreate response returned a different ConversationId.");
                 return getFaultyResponse(sessionCreateRS.getStatus(),
-                        messages.getProperty("error.desc"),
+                        messages.getProperty(ERROR_DESC),
                         messages.getProperty("error.convId"));
             }
 
             if (!headerProperties.getCpaid().equals(messageHeader.getCPAId())) {
                 log.error("SessionCreate response returned a different CPAId.");
                 return getFaultyResponse(sessionCreateRS.getStatus(),
-                        messages.getProperty("error.desc"),
+                        messages.getProperty(ERROR_DESC),
                         messages.getProperty("error.cpaid"));
             }
 

@@ -10,8 +10,7 @@ import org.springframework.ws.soap.SoapHeader;
 import org.springframework.ws.soap.SoapMessage;
 import org.springframework.ws.support.MarshallingUtils;
 
-import static com.sabre.pnrretriever.config.properties.ResultProperties.APPROVED;
-import static com.sabre.pnrretriever.config.properties.ResultProperties.ERROR;
+import static com.sabre.pnrretriever.config.properties.ResultProperties.*;
 import static com.sabre.pnrretriever.headers.message_header.Action.SESSION_CLOSE;
 
 @Component
@@ -42,14 +41,14 @@ public class SessionCloseHandler extends AbstractHandler {
             if (!headerProperties.getConversationId().equals(messageHeader.getConversationId())) {
                 log.error("SessionClose response returned a different ConversationId.");
                 return getFaultyResponse(sessionCloseRS.getStatus(),
-                        messages.getProperty("error.desc"),
+                        messages.getProperty(ERROR_DESC),
                         messages.getProperty("error.convId"));
             }
 
             if (!headerProperties.getCpaid().equals(messageHeader.getCPAId())) {
                 log.error("SessionClose response returned a different CPAId.");
                 return getFaultyResponse(sessionCloseRS.getStatus(),
-                        messages.getProperty("error.desc"),
+                        messages.getProperty(ERROR_DESC),
                         messages.getProperty("error.cpaid"));
             }
 

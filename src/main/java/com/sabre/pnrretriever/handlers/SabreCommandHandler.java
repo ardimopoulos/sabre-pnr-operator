@@ -21,8 +21,6 @@ import static com.sabre.pnrretriever.headers.message_header.Action.SABRE_COMMAND
 @Slf4j
 public class SabreCommandHandler extends AbstractHandler {
 
-    private SoapMessage soapResponse;
-
     @Setter
     private String command;
 
@@ -32,7 +30,7 @@ public class SabreCommandHandler extends AbstractHandler {
         SabreCommandLLSRS sabreCommandLLSRS;
 
         try {
-            soapResponse = sendAndReceive(getSabreCommandLLSRQ());
+            SoapMessage soapResponse = sendAndReceive(getSabreCommandLLSRQ());
 
             sabreCommandLLSRS = (SabreCommandLLSRS) webServiceTemplate.getUnmarshaller()
                     .unmarshal(soapResponse.getPayloadSource());
@@ -41,13 +39,13 @@ public class SabreCommandHandler extends AbstractHandler {
 
             if (!headerProperties.getConversationId().equals(messageHeader.getConversationId())) {
                 log.error("SessionClose response returned a different ConversationId.");
-                return getFaultyResponse(FAIL, messages.getProperty("error.desc"),
+                return getFaultyResponse(FAIL, messages.getProperty(ERROR_DESC),
                         messages.getProperty("error.convId"));
             }
 
             if (!headerProperties.getCpaid().equals(messageHeader.getCPAId())) {
                 log.error("SessionClose response returned a different CPAId.");
-                return getFaultyResponse(FAIL, messages.getProperty("error.desc"),
+                return getFaultyResponse(FAIL, messages.getProperty(ERROR_DESC),
                         messages.getProperty("error.cpaid"));
             }
 
@@ -55,7 +53,7 @@ public class SabreCommandHandler extends AbstractHandler {
 
             if (!securityRq.getToken().equals(security.getBinarySecurityToken())) {
                 log.error("SessionClose response returned a different token");
-                return getFaultyResponse(FAIL, messages.getProperty("error.desc"),
+                return getFaultyResponse(FAIL, messages.getProperty(ERROR_DESC),
                         messages.getProperty("error.token"));
             }
 

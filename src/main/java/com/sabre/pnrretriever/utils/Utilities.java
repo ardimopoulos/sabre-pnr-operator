@@ -11,6 +11,8 @@ import java.io.ByteArrayOutputStream;
 
 public class Utilities {
 
+    private Utilities(){}
+
     public static String getSOAPMessageAsString(SoapMessage soapMessage) {
         try {
             Transformer transformer = TransformerFactory.newInstance().newTransformer();
