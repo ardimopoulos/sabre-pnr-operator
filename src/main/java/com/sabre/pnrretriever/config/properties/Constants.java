@@ -1,9 +1,8 @@
 package com.sabre.pnrretriever.config.properties;
 
-public class ResultProperties {
+public class Constants {
 
-    private ResultProperties() {
-    }
+    private Constants() {}
 
     public static final String ERROR_DESC = "error.desc";
     public static final String APPROVED = "Approved";

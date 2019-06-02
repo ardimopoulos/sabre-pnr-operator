@@ -29,7 +29,5 @@ public class SoapClientInterceptor implements ClientInterceptor {
     }
 
     @Override
-    public void afterCompletion(MessageContext messageContext, Exception e) throws WebServiceClientException {
-
-    }
+    public void afterCompletion(MessageContext messageContext, Exception e) throws WebServiceClientException {}
 }

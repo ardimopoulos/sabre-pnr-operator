@@ -14,7 +14,7 @@ import org.springframework.ws.support.MarshallingUtils;
 
 import java.time.LocalDateTime;
 
-import static com.sabre.pnrretriever.config.properties.ResultProperties.*;
+import static com.sabre.pnrretriever.config.properties.Constants.*;
 import static com.sabre.pnrretriever.headers.message_header.Action.SABRE_COMMAND_LLS;
 
 @Component

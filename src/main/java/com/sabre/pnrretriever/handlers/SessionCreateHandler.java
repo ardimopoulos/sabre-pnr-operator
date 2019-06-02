@@ -11,7 +11,7 @@ import org.springframework.ws.soap.SoapHeader;
 import org.springframework.ws.soap.SoapMessage;
 import org.springframework.ws.support.MarshallingUtils;
 
-import static com.sabre.pnrretriever.config.properties.ResultProperties.*;
+import static com.sabre.pnrretriever.config.properties.Constants.*;
 import static com.sabre.pnrretriever.headers.message_header.Action.SESSION_CREATE;
 
 @Component
