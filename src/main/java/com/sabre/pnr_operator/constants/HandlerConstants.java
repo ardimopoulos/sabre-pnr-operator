@@ -1,8 +1,8 @@
-package com.sabre.pnrretriever.config.properties;
+package com.sabre.pnr_operator.constants;
 
-public class Constants {
+public class HandlerConstants {
 
-    private Constants() {}
+    private HandlerConstants() {}
 
     public static final String ERROR_DESC = "error.desc";
     public static final String APPROVED = "Approved";
