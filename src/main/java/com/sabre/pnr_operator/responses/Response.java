@@ -1,4 +1,4 @@
-package com.sabre.pnrretriever.responses;
+package com.sabre.pnr_operator.responses;
 
 import lombok.Data;
 import lombok.experimental.Accessors;

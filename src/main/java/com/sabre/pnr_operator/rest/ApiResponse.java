@@ -1,7 +1,7 @@
-package com.sabre.pnrretriever.rest;
+package com.sabre.pnr_operator.rest;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.sabre.pnrretriever.responses.Response;
+import com.sabre.pnr_operator.responses.Response;
 import lombok.Data;
 import org.springframework.stereotype.Component;
 

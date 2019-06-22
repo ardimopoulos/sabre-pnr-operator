@@ -1,6 +1,6 @@
-package com.sabre.pnrretriever.headers.message_header;
+package com.sabre.pnr_operator.headers.message_header;
 
-import com.sabre.pnrretriever.config.properties.HeaderProperties;
+import com.sabre.pnr_operator.config.properties.HeaderProperties;
 import com.sabre.web_services.message_header.*;
 import com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl;
 import org.springframework.beans.factory.annotation.Autowired;

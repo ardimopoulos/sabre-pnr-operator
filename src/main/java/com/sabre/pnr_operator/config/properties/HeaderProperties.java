@@ -1,4 +1,4 @@
-package com.sabre.pnrretriever.config.properties;
+package com.sabre.pnr_operator.config.properties;
 
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;

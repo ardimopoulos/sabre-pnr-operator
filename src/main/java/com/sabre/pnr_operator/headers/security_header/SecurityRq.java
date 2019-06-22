@@ -1,6 +1,6 @@
-package com.sabre.pnrretriever.headers.security_header;
+package com.sabre.pnr_operator.headers.security_header;
 
-import com.sabre.pnrretriever.config.properties.HeaderProperties;
+import com.sabre.pnr_operator.config.properties.HeaderProperties;
 import com.sabre.web_services.wsse.Security;
 import lombok.Getter;
 import lombok.Setter;

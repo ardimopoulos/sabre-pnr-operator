@@ -1,4 +1,4 @@
-package com.sabre.pnrretriever.interceptor;
+package com.sabre.pnr_operator.interceptor;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ws.client.WebServiceClientException;
@@ -6,7 +6,7 @@ import org.springframework.ws.client.support.interceptor.ClientInterceptor;
 import org.springframework.ws.context.MessageContext;
 import org.springframework.ws.soap.SoapMessage;
 
-import static com.sabre.pnrretriever.utils.Utilities.getSOAPMessageAsString;
+import static com.sabre.pnr_operator.utils.Utilities.getSOAPMessageAsString;
 
 @Slf4j
 public class SoapClientInterceptor implements ClientInterceptor {

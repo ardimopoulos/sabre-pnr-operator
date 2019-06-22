@@ -1,11 +1,11 @@
-package com.sabre.pnrretriever;
+package com.sabre.pnr_operator;
 
-import com.sabre.pnrretriever.config.properties.HeaderProperties;
-import com.sabre.pnrretriever.handlers.SabreCommandHandler;
-import com.sabre.pnrretriever.handlers.SessionCloseHandler;
-import com.sabre.pnrretriever.handlers.SessionCreateHandler;
-import com.sabre.pnrretriever.responses.Response;
-import com.sabre.pnrretriever.rest.ApiResponse;
+import com.sabre.pnr_operator.config.properties.HeaderProperties;
+import com.sabre.pnr_operator.handlers.SabreCommandHandler;
+import com.sabre.pnr_operator.handlers.SessionCloseHandler;
+import com.sabre.pnr_operator.handlers.SessionCreateHandler;
+import com.sabre.pnr_operator.responses.Response;
+import com.sabre.pnr_operator.rest.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;

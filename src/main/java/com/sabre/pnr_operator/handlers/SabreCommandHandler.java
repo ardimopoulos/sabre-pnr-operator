@@ -1,6 +1,6 @@
-package com.sabre.pnrretriever.handlers;
+package com.sabre.pnr_operator.handlers;
 
-import com.sabre.pnrretriever.responses.Response;
+import com.sabre.pnr_operator.responses.Response;
 import com.sabre.web_services.message_header.MessageHeader;
 import com.sabre.web_services.sabreCommandLLS1_8_1.sabreCommandLLS1_8_1RQ.SabreCommandLLSRQ;
 import com.sabre.web_services.sabreCommandLLS1_8_1.sabreCommandLLS1_8_1RS.SabreCommandLLSRS;
@@ -14,8 +14,8 @@ import org.springframework.ws.support.MarshallingUtils;
 
 import java.time.LocalDateTime;
 
-import static com.sabre.pnrretriever.config.properties.Constants.*;
-import static com.sabre.pnrretriever.headers.message_header.Action.SABRE_COMMAND_LLS;
+import static com.sabre.pnr_operator.constants.HandlerConstants.*;
+import static com.sabre.pnr_operator.headers.message_header.Action.SABRE_COMMAND_LLS;
 
 @Component
 @Slf4j

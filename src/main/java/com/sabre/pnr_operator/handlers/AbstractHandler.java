@@ -1,9 +1,9 @@
-package com.sabre.pnrretriever.handlers;
+package com.sabre.pnr_operator.handlers;
 
-import com.sabre.pnrretriever.config.properties.HeaderProperties;
-import com.sabre.pnrretriever.headers.message_header.MessageHeaderRq;
-import com.sabre.pnrretriever.headers.security_header.SecurityRq;
-import com.sabre.pnrretriever.responses.Response;
+import com.sabre.pnr_operator.config.properties.HeaderProperties;
+import com.sabre.pnr_operator.headers.message_header.MessageHeaderRq;
+import com.sabre.pnr_operator.headers.security_header.SecurityRq;
+import com.sabre.pnr_operator.responses.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ws.client.core.WebServiceTemplate;
 import org.springframework.ws.client.core.support.WebServiceGatewaySupport;

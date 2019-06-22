@@ -1,4 +1,4 @@
-package com.sabre.pnrretriever;
+package com.sabre.pnr_operator;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

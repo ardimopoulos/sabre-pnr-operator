@@ -1,6 +1,6 @@
-package com.sabre.pnrretriever.config;
+package com.sabre.pnr_operator.config;
 
-import com.sabre.pnrretriever.interceptor.SoapClientInterceptor;
+import com.sabre.pnr_operator.interceptor.SoapClientInterceptor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

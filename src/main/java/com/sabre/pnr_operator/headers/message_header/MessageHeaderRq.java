@@ -1,4 +1,4 @@
-package com.sabre.pnrretriever.headers.message_header;
+package com.sabre.pnr_operator.headers.message_header;
 
 import com.sabre.web_services.message_header.From;
 import com.sabre.web_services.message_header.MessageData;

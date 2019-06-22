@@ -1,6 +1,6 @@
-package com.sabre.pnrretriever.handlers;
+package com.sabre.pnr_operator.handlers;
 
-import com.sabre.pnrretriever.responses.Response;
+import com.sabre.pnr_operator.responses.Response;
 import com.sabre.web_services.message_header.MessageHeader;
 import com.sabre.web_services.sessionClose.sessionCloseRQ.SessionCloseRQ;
 import com.sabre.web_services.sessionClose.sessionCloseRS.SessionCloseRS;
@@ -10,8 +10,8 @@ import org.springframework.ws.soap.SoapHeader;
 import org.springframework.ws.soap.SoapMessage;
 import org.springframework.ws.support.MarshallingUtils;
 
-import static com.sabre.pnrretriever.config.properties.Constants.*;
-import static com.sabre.pnrretriever.headers.message_header.Action.SESSION_CLOSE;
+import static com.sabre.pnr_operator.constants.HandlerConstants.*;
+import static com.sabre.pnr_operator.headers.message_header.Action.SESSION_CLOSE;
 
 @Component
 @Slf4j

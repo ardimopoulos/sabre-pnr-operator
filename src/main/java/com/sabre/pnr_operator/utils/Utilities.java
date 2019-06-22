@@ -1,4 +1,4 @@
-package com.sabre.pnrretriever.utils;
+package com.sabre.pnr_operator.utils;
 
 import org.springframework.ws.soap.SoapMessage;
 

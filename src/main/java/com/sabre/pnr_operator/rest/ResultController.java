@@ -1,4 +1,4 @@
-package com.sabre.pnrretriever.rest;
+package com.sabre.pnr_operator.rest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
