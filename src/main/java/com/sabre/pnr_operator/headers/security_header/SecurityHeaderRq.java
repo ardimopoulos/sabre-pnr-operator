@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 import static java.util.Objects.isNull;
 
 @Component
-public class SecurityRq {
+public class SecurityHeaderRq {
 
     @Autowired
     private HeaderProperties headerProperties;

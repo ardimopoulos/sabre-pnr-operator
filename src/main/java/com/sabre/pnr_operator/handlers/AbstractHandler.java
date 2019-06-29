@@ -2,7 +2,7 @@ package com.sabre.pnr_operator.handlers;
 
 import com.sabre.pnr_operator.config.properties.HeaderProperties;
 import com.sabre.pnr_operator.headers.message_header.MessageHeaderRq;
-import com.sabre.pnr_operator.headers.security_header.SecurityRq;
+import com.sabre.pnr_operator.headers.security_header.SecurityHeaderRq;
 import com.sabre.pnr_operator.responses.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ws.client.core.WebServiceTemplate;
@@ -28,7 +28,7 @@ public abstract class AbstractHandler extends WebServiceGatewaySupport implement
     MessageHeaderRq messageHeaderRq;
 
     @Autowired
-    SecurityRq securityRq;
+    SecurityHeaderRq securityRq;
 
     @Autowired
     Properties messages;
