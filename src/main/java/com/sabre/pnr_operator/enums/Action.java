@@ -1,4 +1,4 @@
-package com.sabre.pnr_operator.headers.message_header;
+package com.sabre.pnr_operator.enums;
 
 import lombok.Getter;
 
