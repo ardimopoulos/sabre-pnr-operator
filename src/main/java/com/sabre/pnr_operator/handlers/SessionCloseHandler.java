@@ -1,7 +1,7 @@
 package com.sabre.pnr_operator.handlers;
 
 import com.sabre.pnr_operator.responses.Response;
-import com.sabre.web_services.message_header.MessageHeader;
+import com.sabre.pnr_operator.utils.ResponseHeaderValidator;
 import com.sabre.web_services.sessionClose.sessionCloseRQ.SessionCloseRQ;
 import com.sabre.web_services.sessionClose.sessionCloseRS.SessionCloseRS;
 import lombok.extern.slf4j.Slf4j;
@@ -10,8 +10,9 @@ import org.springframework.ws.soap.SoapHeader;
 import org.springframework.ws.soap.SoapMessage;
 import org.springframework.ws.support.MarshallingUtils;
 
-import static com.sabre.pnr_operator.constants.HandlerConstants.*;
-import static com.sabre.pnr_operator.headers.message_header.Action.SESSION_CLOSE;
+import static com.sabre.pnr_operator.constants.HandlerConstants.APPROVED;
+import static com.sabre.pnr_operator.constants.HandlerConstants.ERROR;
+import static com.sabre.pnr_operator.enums.Action.SESSION_CLOSE;
 
 @Component
 @Slf4j
@@ -36,20 +37,10 @@ public class SessionCloseHandler extends AbstractHandler {
                 );
             }
 
-            MessageHeader messageHeader = (MessageHeader) getHeaderElement(soapResponse.getSoapHeader(), MessageHeader.class);
+            ResponseHeaderValidator responseHeaderValidator = new ResponseHeaderValidator(headerProperties);
 
-            if (!headerProperties.getConversationId().equals(messageHeader.getConversationId())) {
-                log.error("SessionClose response returned a different ConversationId.");
-                return getFaultyResponse(sessionCloseRS.getStatus(),
-                        messages.getProperty(ERROR_DESC),
-                        messages.getProperty("error.convId"));
-            }
-
-            if (!headerProperties.getCpaid().equals(messageHeader.getCPAId())) {
-                log.error("SessionClose response returned a different CPAId.");
-                return getFaultyResponse(sessionCloseRS.getStatus(),
-                        messages.getProperty(ERROR_DESC),
-                        messages.getProperty("error.cpaid"));
+            if (responseHeaderValidator.containInvalidHeaders(soapResponse, securityRq, webServiceTemplate.getUnmarshaller())) {
+                return getFaultyResponseBasedOnInvalidHeaders(responseHeaderValidator.getInvalidHeaderReasons());
             }
 
         } catch (Exception e) {
@@ -60,7 +51,7 @@ public class SessionCloseHandler extends AbstractHandler {
 
         log.info("Successfully retrieved SessionCLose Response.");
 
-        return getSuccessfulResponse(sessionCloseRS.getStatus(), messages.getProperty("session.close.success"),
+        return getSuccessfulResponse(messages.getProperty("session.close.success"),
                 messages.getProperty("session.approved"));
     }
 

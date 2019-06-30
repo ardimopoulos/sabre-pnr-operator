@@ -1,5 +1,8 @@
 package com.sabre.pnr_operator.utils;
 
+import org.springframework.oxm.Unmarshaller;
+import org.springframework.ws.soap.SoapHeader;
+import org.springframework.ws.soap.SoapHeaderElement;
 import org.springframework.ws.soap.SoapMessage;
 
 import javax.xml.transform.OutputKeys;
@@ -8,10 +11,27 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.Iterator;
 
 public class Utilities {
 
     private Utilities(){}
+
+    public static Object getHeaderElement(SoapHeader header, Unmarshaller unmarshaller, Class className) throws IOException {
+        Object headerElement = null;
+
+        Iterator<SoapHeaderElement> headerElements = header.examineAllHeaderElements();
+
+        while (headerElements.hasNext()) {
+            SoapHeaderElement soapHeaderElement = headerElements.next();
+            if (soapHeaderElement.getName().toString().contains(className.getSimpleName())) {
+                headerElement =unmarshaller.unmarshal(soapHeaderElement.getSource());
+            }
+        }
+
+        return headerElement;
+    }
 
     public static String getSOAPMessageAsString(SoapMessage soapMessage) {
         try {

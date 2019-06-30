@@ -4,18 +4,20 @@ import com.sabre.pnr_operator.config.properties.HeaderProperties;
 import com.sabre.pnr_operator.headers.message_header.MessageHeaderRq;
 import com.sabre.pnr_operator.headers.security_header.SecurityHeaderRq;
 import com.sabre.pnr_operator.responses.Response;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ws.client.core.WebServiceTemplate;
 import org.springframework.ws.client.core.support.WebServiceGatewaySupport;
 import org.springframework.ws.soap.SoapFault;
-import org.springframework.ws.soap.SoapHeader;
-import org.springframework.ws.soap.SoapHeaderElement;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.Iterator;
+import java.util.List;
 import java.util.Properties;
 
+import static com.sabre.pnr_operator.constants.HandlerConstants.*;
+import static com.sabre.pnr_operator.enums.FaultyElement.*;
+
+@Slf4j
 public abstract class AbstractHandler extends WebServiceGatewaySupport implements Handler {
 
     @Autowired
@@ -33,18 +35,27 @@ public abstract class AbstractHandler extends WebServiceGatewaySupport implement
     @Autowired
     Properties messages;
 
-    Object getHeaderElement(SoapHeader header, Class className) throws IOException {
-        Object headerElement = null;
+    Response getFaultyResponseBasedOnInvalidHeaders (List<Enum> invalidHeaderReasons) {
+        StringBuilder errorMessageBuilder = new StringBuilder();
 
-        Iterator<SoapHeaderElement> headerElements = header.examineAllHeaderElements();
+        if (invalidHeaderReasons.contains(CONVERSATION_ID)) {
+            log.error("SessionClose response returned a different ConversationId.");
+            errorMessageBuilder.append(messages.getProperty("error.cpaid")).append("\n");
 
-        while (headerElements.hasNext()) {
-            SoapHeaderElement soapHeaderElement = headerElements.next();
-            if (soapHeaderElement.getName().toString().contains(className.getSimpleName())) {
-                headerElement = webServiceTemplate.getUnmarshaller().unmarshal(soapHeaderElement.getSource());
-            }
         }
-        return headerElement;
+
+        if (invalidHeaderReasons.contains(CPAID)) {
+            log.error("SessionClose response returned a different CPAId.");
+            errorMessageBuilder.append(messages.getProperty("error.cpaid")).append("\n");
+
+        }
+
+        if (invalidHeaderReasons.contains(TOKEN)) {
+            log.error("SessionClose response returned a different token.");
+            errorMessageBuilder.append(messages.getProperty("error.token"));
+        }
+
+        return getFaultyResponse(FAIL, messages.getProperty(ERROR_DESC), errorMessageBuilder.toString());
     }
 
     Response getFaultyResponse(String status, String description, String errorMessage) {
@@ -63,10 +74,10 @@ public abstract class AbstractHandler extends WebServiceGatewaySupport implement
         );
     }
 
-    Response getSuccessfulResponse(String status, String description, String message) {
+    Response getSuccessfulResponse(String description, String message) {
         return new Response()
                 .setSuccess(true)
-                .setStatus(status)
+                .setStatus(SUCCESS)
                 .setDescription(description)
                 .setMessage(message)
                 .setTimestamp(LocalDateTime.now());

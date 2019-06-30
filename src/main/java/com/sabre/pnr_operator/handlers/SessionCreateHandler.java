@@ -1,6 +1,7 @@
 package com.sabre.pnr_operator.handlers;
 
 import com.sabre.pnr_operator.responses.Response;
+import com.sabre.pnr_operator.utils.ResponseHeaderValidator;
 import com.sabre.web_services.message_header.MessageHeader;
 import com.sabre.web_services.sessionCreate.sessionCreateRQ.SessionCreateRQ;
 import com.sabre.web_services.sessionCreate.sessionCreateRS.SessionCreateRS;
@@ -12,7 +13,8 @@ import org.springframework.ws.soap.SoapMessage;
 import org.springframework.ws.support.MarshallingUtils;
 
 import static com.sabre.pnr_operator.constants.HandlerConstants.*;
-import static com.sabre.pnr_operator.headers.message_header.Action.SESSION_CREATE;
+import static com.sabre.pnr_operator.enums.Action.SESSION_CREATE;
+import static com.sabre.pnr_operator.utils.Utilities.getHeaderElement;
 
 @Component
 @Slf4j
@@ -36,30 +38,19 @@ public class SessionCreateHandler extends AbstractHandler {
                 );
             }
 
-            MessageHeader messageHeader = (MessageHeader) getHeaderElement(soapResponse.getSoapHeader(), MessageHeader.class);
+            MessageHeader messageHeader = (MessageHeader) getHeaderElement(soapResponse.getSoapHeader(),
+                    webServiceTemplate.getUnmarshaller(), MessageHeader.class);
 
-            if (!headerProperties.getConversationId().equals(messageHeader.getConversationId())) {
-                log.error("SessionCreate response returned a different ConversationId.");
-                return getFaultyResponse(sessionCreateRS.getStatus(),
-                        messages.getProperty(ERROR_DESC),
-                        messages.getProperty("error.convId"));
+            Security security = (Security) getHeaderElement(soapResponse.getSoapHeader(),
+                    webServiceTemplate.getUnmarshaller(),  Security.class);
+
+            ResponseHeaderValidator responseHeaderValidator = new ResponseHeaderValidator(headerProperties);
+
+            if (responseHeaderValidator.containInvalidHeaders(messageHeader, security)) {
+                return getFaultyResponseBasedOnInvalidHeaders(responseHeaderValidator.getInvalidHeaderReasons());
             }
 
-            if (!headerProperties.getCpaid().equals(messageHeader.getCPAId())) {
-                log.error("SessionCreate response returned a different CPAId.");
-                return getFaultyResponse(sessionCreateRS.getStatus(),
-                        messages.getProperty(ERROR_DESC),
-                        messages.getProperty("error.cpaid"));
-            }
-
-            Security securityHeader = (Security) getHeaderElement(soapResponse.getSoapHeader(), Security.class);
-            securityRq.setToken(securityHeader.getBinarySecurityToken());
-
-            if (securityRq.isTokenEmpty()) {
-                log.error("Security header does not contain token.");
-                return getFaultyResponse(FAIL, messages.getProperty("error.desc"),
-                        messages.getProperty("error.token.empty"));
-            }
+            securityRq.setToken(security.getBinarySecurityToken());
 
         } catch (Exception e) {
             log.error("Exception while opening session: " + e);
@@ -69,8 +60,7 @@ public class SessionCreateHandler extends AbstractHandler {
 
         log.info("Successfully retrieved SessionCreate Response.");
 
-        return getSuccessfulResponse(sessionCreateRS.getStatus(), messages.getProperty("session.open.success"),
-                messages.getProperty("session.approved"));
+        return getSuccessfulResponse(messages.getProperty("session.open.success"), messages.getProperty("session.approved"));
     }
 
     private SoapMessage sendAndReceive(SessionCreateRQ sessionCreateRQ) {
