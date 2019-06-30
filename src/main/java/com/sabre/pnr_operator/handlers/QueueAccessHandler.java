@@ -1,23 +1,31 @@
 package com.sabre.pnr_operator.handlers;
 
+import com.sabre.pnr_operator.models.QueueLine;
+import com.sabre.pnr_operator.models.QueueList;
 import com.sabre.pnr_operator.responses.Response;
-import com.sabre.web_services.message_header.MessageHeader;
+import com.sabre.pnr_operator.utils.ResponseHeaderValidator;
 import com.sabre.web_services.queueAccessLLS2_0_9.queueAccessLLS2_0_9RQ.QueueAccessRQ;
 import com.sabre.web_services.queueAccessLLS2_0_9.queueAccessLLS2_0_9RS.QueueAccessRS;
-import com.sabre.web_services.wsse.Security;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.ws.soap.SoapHeader;
 import org.springframework.ws.soap.SoapMessage;
 import org.springframework.ws.support.MarshallingUtils;
 
-import static com.sabre.pnr_operator.constants.HandlerConstants.*;
-import static com.sabre.pnr_operator.headers.message_header.Action.QUEUE_ACCESS_LLS;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+
+import static com.sabre.pnr_operator.constants.HandlerConstants.ERROR;
+import static com.sabre.pnr_operator.enums.Action.QUEUE_ACCESS_LLS;
 import static java.lang.Boolean.TRUE;
 
 @Component
 @Slf4j
 public class QueueAccessHandler extends AbstractHandler {
+
+    @Autowired
+    private QueueList queueList;
 
     @Override
     public Response processRequest() {
@@ -25,31 +33,15 @@ public class QueueAccessHandler extends AbstractHandler {
         QueueAccessRS queueAccessRS;
 
         try {
-            SoapMessage soapResponse = sendAndReceive(getQuquqAccessRQ());
+            SoapMessage soapResponse = sendAndReceive(getQueueAccessRQ());
 
             queueAccessRS = (QueueAccessRS) webServiceTemplate.getUnmarshaller()
                     .unmarshal(soapResponse.getPayloadSource());
 
-            MessageHeader messageHeader = (MessageHeader) getHeaderElement(soapResponse.getSoapHeader(), MessageHeader.class);
+            ResponseHeaderValidator responseHeaderValidator = new ResponseHeaderValidator(headerProperties);
 
-            if (!headerProperties.getConversationId().equals(messageHeader.getConversationId())) {
-                log.error("SessionClose response returned a different ConversationId.");
-                return getFaultyResponse(FAIL, messages.getProperty(ERROR_DESC),
-                        messages.getProperty("error.convId"));
-            }
-
-            if (!headerProperties.getCpaid().equals(messageHeader.getCPAId())) {
-                log.error("SessionClose response returned a different CPAId.");
-                return getFaultyResponse(FAIL, messages.getProperty(ERROR_DESC),
-                        messages.getProperty("error.cpaid"));
-            }
-
-            Security security = (Security) getHeaderElement(soapResponse.getSoapHeader(), Security.class);
-
-            if (!securityRq.getToken().equals(security.getBinarySecurityToken())) {
-                log.error("SessionClose response returned a different token");
-                return getFaultyResponse(FAIL, messages.getProperty(ERROR_DESC),
-                        messages.getProperty("error.token"));
+            if (responseHeaderValidator.containInvalidHeaders(soapResponse, securityRq, webServiceTemplate.getUnmarshaller())) {
+                return getFaultyResponseBasedOnInvalidHeaders(responseHeaderValidator.getInvalidHeaderReasons());
             }
 
         } catch (Exception e) {
@@ -59,7 +51,24 @@ public class QueueAccessHandler extends AbstractHandler {
 
         log.info("Successfully retrieved QueueAccess Response.");
 
-        return getSuccessfulResponse(SUCCESS, messages.getProperty("queue.access.success"), queueAccessRS.getApplicationResults().getStatus().value());
+        ArrayList<QueueLine> queueLineList = new ArrayList<>();
+
+        for (QueueAccessRS.Line line : queueAccessRS.getLine()) {
+            QueueLine queueLine = new QueueLine(
+                    LocalDateTime.parse(line.getDateTime()),
+                    line.getPOS().getSource().getPseudoCityCode(),
+                    line.getPOS().getSource().getAgentSine(),
+                    line.getUniqueID().getID(),
+                    Integer.parseInt(line.getNumber())
+            );
+
+            queueLineList.add(queueLine);
+        }
+
+        queueList.setQueueLineList(queueLineList);
+        queueList.setQueueListParagraph(queueAccessRS.getParagraph().getText());
+
+        return getSuccessfulResponse(messages.getProperty("queue.access.success"), queueAccessRS.getApplicationResults().getStatus().value());
     }
 
     private SoapMessage sendAndReceive(QueueAccessRQ queueAccessRQ) {
@@ -74,9 +83,11 @@ public class QueueAccessHandler extends AbstractHandler {
         );
     }
 
-    private QueueAccessRQ getQuquqAccessRQ() {
+    private QueueAccessRQ getQueueAccessRQ() {
         QueueAccessRQ queueAccessRQ = new QueueAccessRQ();
         QueueAccessRQ.QueueIdentifier queueIdentifier = new QueueAccessRQ.QueueIdentifier();
+        queueIdentifier.setPseudoCityCode(headerProperties.getCpaid());
+        queueIdentifier.setNumber("100");
         QueueAccessRQ.QueueIdentifier.List list = new QueueAccessRQ.QueueIdentifier.List();
         list.setInd(TRUE);
         queueIdentifier.setList(list);
