@@ -4,7 +4,6 @@ import com.sabre.pnr_operator.config.properties.HeaderProperties;
 import com.sabre.web_services.wsse.Security;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -13,8 +12,11 @@ import static java.util.Objects.isNull;
 @Component
 public class SecurityHeaderRq {
 
-    @Autowired
     private HeaderProperties headerProperties;
+
+    public SecurityHeaderRq(HeaderProperties headerProperties) {
+        this.headerProperties = headerProperties;
+    }
 
     @Value(value = "${security.username}")
     private String username;

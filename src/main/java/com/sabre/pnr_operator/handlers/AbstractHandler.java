@@ -4,8 +4,8 @@ import com.sabre.pnr_operator.config.properties.HeaderProperties;
 import com.sabre.pnr_operator.headers.message_header.MessageHeaderRq;
 import com.sabre.pnr_operator.headers.security_header.SecurityHeaderRq;
 import com.sabre.pnr_operator.responses.Response;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ws.client.core.WebServiceTemplate;
 import org.springframework.ws.client.core.support.WebServiceGatewaySupport;
 import org.springframework.ws.soap.SoapFault;
@@ -17,22 +17,14 @@ import java.util.Properties;
 import static com.sabre.pnr_operator.constants.HandlerConstants.*;
 import static com.sabre.pnr_operator.enums.FaultyElement.*;
 
+@AllArgsConstructor
 @Slf4j
 public abstract class AbstractHandler extends WebServiceGatewaySupport implements Handler {
 
-    @Autowired
     WebServiceTemplate webServiceTemplate;
-
-    @Autowired
     HeaderProperties headerProperties;
-
-    @Autowired
     MessageHeaderRq messageHeaderRq;
-
-    @Autowired
     SecurityHeaderRq securityRq;
-
-    @Autowired
     Properties messages;
 
     Response getFaultyResponseBasedOnInvalidHeaders (List<Enum> invalidHeaderReasons) {

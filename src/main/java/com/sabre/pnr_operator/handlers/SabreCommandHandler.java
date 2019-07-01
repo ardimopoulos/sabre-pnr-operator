@@ -1,5 +1,8 @@
 package com.sabre.pnr_operator.handlers;
 
+import com.sabre.pnr_operator.config.properties.HeaderProperties;
+import com.sabre.pnr_operator.headers.message_header.MessageHeaderRq;
+import com.sabre.pnr_operator.headers.security_header.SecurityHeaderRq;
 import com.sabre.pnr_operator.responses.Response;
 import com.sabre.pnr_operator.utils.ResponseHeaderValidator;
 import com.sabre.web_services.sabreCommandLLS1_8_1.sabreCommandLLS1_8_1RQ.SabreCommandLLSRQ;
@@ -7,11 +10,13 @@ import com.sabre.web_services.sabreCommandLLS1_8_1.sabreCommandLLS1_8_1RS.SabreC
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.springframework.ws.client.core.WebServiceTemplate;
 import org.springframework.ws.soap.SoapHeader;
 import org.springframework.ws.soap.SoapMessage;
 import org.springframework.ws.support.MarshallingUtils;
 
 import java.time.LocalDateTime;
+import java.util.Properties;
 
 import static com.sabre.pnr_operator.constants.HandlerConstants.ERROR;
 import static com.sabre.pnr_operator.enums.Action.SABRE_COMMAND_LLS;
@@ -22,6 +27,12 @@ public class SabreCommandHandler extends AbstractHandler {
 
     @Setter
     private String command;
+
+    public SabreCommandHandler(WebServiceTemplate webServiceTemplate, HeaderProperties headerProperties, MessageHeaderRq messageHeaderRq,
+                               SecurityHeaderRq securityRq, Properties messages) {
+
+        super(webServiceTemplate, headerProperties, messageHeaderRq, securityRq, messages);
+    }
 
     @Override
     public Response processRequest() {

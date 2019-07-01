@@ -4,15 +4,15 @@ import com.sabre.pnr_operator.config.properties.HeaderProperties;
 import com.sabre.pnr_operator.enums.Action;
 import com.sabre.web_services.message_header.*;
 import com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.time.Clock;
 
 @Component
+@AllArgsConstructor
 public class MessageHeaderRqImpl implements MessageHeaderRq {
 
-    @Autowired
     private HeaderProperties headerProperties;
 
     @Override

@@ -1,5 +1,8 @@
 package com.sabre.pnr_operator.handlers;
 
+import com.sabre.pnr_operator.config.properties.HeaderProperties;
+import com.sabre.pnr_operator.headers.message_header.MessageHeaderRq;
+import com.sabre.pnr_operator.headers.security_header.SecurityHeaderRq;
 import com.sabre.pnr_operator.models.QueueLine;
 import com.sabre.pnr_operator.models.QueueList;
 import com.sabre.pnr_operator.responses.Response;
@@ -7,14 +10,15 @@ import com.sabre.pnr_operator.utils.ResponseHeaderValidator;
 import com.sabre.web_services.queueAccessLLS2_0_9.queueAccessLLS2_0_9RQ.QueueAccessRQ;
 import com.sabre.web_services.queueAccessLLS2_0_9.queueAccessLLS2_0_9RS.QueueAccessRS;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.ws.client.core.WebServiceTemplate;
 import org.springframework.ws.soap.SoapHeader;
 import org.springframework.ws.soap.SoapMessage;
 import org.springframework.ws.support.MarshallingUtils;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Properties;
 
 import static com.sabre.pnr_operator.constants.HandlerConstants.ERROR;
 import static com.sabre.pnr_operator.enums.Action.QUEUE_ACCESS_LLS;
@@ -24,8 +28,15 @@ import static java.lang.Boolean.TRUE;
 @Slf4j
 public class QueueAccessHandler extends AbstractHandler {
 
-    @Autowired
     private QueueList queueList;
+
+    public QueueAccessHandler(WebServiceTemplate webServiceTemplate, HeaderProperties headerProperties,
+                              MessageHeaderRq messageHeaderRq, SecurityHeaderRq securityRq,
+                              Properties messages, QueueList queueList) {
+
+        super(webServiceTemplate, headerProperties, messageHeaderRq, securityRq, messages);
+        this.queueList = queueList;
+    }
 
     @Override
     public Response processRequest() {
