@@ -21,6 +21,8 @@
 	<properties>
 		<java.version>1.8</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<sonar.projectKey>akisd_sabre-pnr-operator</sonar.projectKey>
+		<sonar.exclusions>src/main/java/com/sabre/web_services/**</sonar.exclusions>
 	</properties>
 
 	<dependencies>
