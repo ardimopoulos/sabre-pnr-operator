@@ -15,6 +15,7 @@ import org.springframework.ws.soap.SoapHeader;
 import org.springframework.ws.soap.SoapMessage;
 import org.springframework.ws.support.MarshallingUtils;
 
+import javax.xml.datatype.DatatypeConfigurationException;
 import java.time.LocalDateTime;
 import java.util.Properties;
 
@@ -65,9 +66,15 @@ public class SabreCommandHandler extends AbstractHandler {
 
     private SoapMessage sendAndReceive(SabreCommandLLSRQ sabreCommandLLSRQ) {
         return webServiceTemplate.sendAndReceive(
-                webServiceMessage -> {
+                webServiceMessage  -> {
                     SoapHeader soapHeader = ((SoapMessage) webServiceMessage).getSoapHeader();
-                    webServiceTemplate.getMarshaller().marshal(messageHeaderRq.getMessageHeader(SABRE_COMMAND_LLS), soapHeader.getResult());
+
+                    try {
+                        webServiceTemplate.getMarshaller().marshal(messageHeaderRq.getMessageHeader(SABRE_COMMAND_LLS), soapHeader.getResult());
+                    } catch (DatatypeConfigurationException e) {
+                        log.info("Caught DatatypeConfigurationException: " + e.getMessage());
+                    }
+
                     webServiceTemplate.getMarshaller().marshal(securityRq.getSecurityHeader(), soapHeader.getResult());
                     MarshallingUtils.marshal(webServiceTemplate.getMarshaller(), sabreCommandLLSRQ, webServiceMessage);
                 },

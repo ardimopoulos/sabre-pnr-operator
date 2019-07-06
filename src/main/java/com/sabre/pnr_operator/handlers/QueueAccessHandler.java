@@ -16,6 +16,7 @@ import org.springframework.ws.soap.SoapHeader;
 import org.springframework.ws.soap.SoapMessage;
 import org.springframework.ws.support.MarshallingUtils;
 
+import javax.xml.datatype.DatatypeConfigurationException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Properties;
@@ -86,7 +87,13 @@ public class QueueAccessHandler extends AbstractHandler {
         return webServiceTemplate.sendAndReceive(
                 webServiceMessage -> {
                     SoapHeader soapHeader = ((SoapMessage) webServiceMessage).getSoapHeader();
-                    webServiceTemplate.getMarshaller().marshal(messageHeaderRq.getMessageHeader(QUEUE_ACCESS_LLS), soapHeader.getResult());
+
+                    try {
+                        webServiceTemplate.getMarshaller().marshal(messageHeaderRq.getMessageHeader(QUEUE_ACCESS_LLS), soapHeader.getResult());
+                    } catch (DatatypeConfigurationException e) {
+                        log.info("Caught DatatypeConfigurationException: " + e.getMessage());
+                    }
+
                     webServiceTemplate.getMarshaller().marshal(securityRq.getSecurityHeader(), soapHeader.getResult());
                     MarshallingUtils.marshal(webServiceTemplate.getMarshaller(), queueAccessRQ, webServiceMessage);
                 },

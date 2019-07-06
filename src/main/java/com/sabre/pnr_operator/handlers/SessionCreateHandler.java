@@ -16,6 +16,7 @@ import org.springframework.ws.soap.SoapHeader;
 import org.springframework.ws.soap.SoapMessage;
 import org.springframework.ws.support.MarshallingUtils;
 
+import javax.xml.datatype.DatatypeConfigurationException;
 import java.util.Properties;
 
 import static com.sabre.pnr_operator.constants.HandlerConstants.APPROVED;
@@ -80,7 +81,13 @@ public class SessionCreateHandler extends AbstractHandler {
         return webServiceTemplate.sendAndReceive(
                 webServiceMessage -> {
                     SoapHeader soapHeader = ((SoapMessage) webServiceMessage).getSoapHeader();
-                    webServiceTemplate.getMarshaller().marshal(messageHeaderRq.getMessageHeader(SESSION_CREATE), soapHeader.getResult());
+
+                    try {
+                        webServiceTemplate.getMarshaller().marshal(messageHeaderRq.getMessageHeader(SESSION_CREATE), soapHeader.getResult());
+                    } catch (DatatypeConfigurationException e) {
+                        log.info("Caught DatatypeConfigurationException: " + e.getMessage());
+                    }
+
                     webServiceTemplate.getMarshaller().marshal(securityRq.getSessionSecurityHeader(), soapHeader.getResult());
                     MarshallingUtils.marshal(webServiceTemplate.getMarshaller(), sessionCreateRQ, webServiceMessage);
                 },
