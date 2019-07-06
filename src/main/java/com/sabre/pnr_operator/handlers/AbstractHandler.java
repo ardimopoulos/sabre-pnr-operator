@@ -31,19 +31,17 @@ public abstract class AbstractHandler extends WebServiceGatewaySupport implement
         StringBuilder errorMessageBuilder = new StringBuilder();
 
         if (invalidHeaderReasons.contains(CONVERSATION_ID)) {
-            log.error("SessionClose response returned a different ConversationId.");
+            log.error("Response returned a different ConversationId.");
             errorMessageBuilder.append(messages.getProperty("error.cpaid")).append("\n");
-
         }
 
         if (invalidHeaderReasons.contains(CPAID)) {
-            log.error("SessionClose response returned a different CPAId.");
+            log.error("Response returned a different CPAId.");
             errorMessageBuilder.append(messages.getProperty("error.cpaid")).append("\n");
-
         }
 
         if (invalidHeaderReasons.contains(TOKEN)) {
-            log.error("SessionClose response returned a different token.");
+            log.error("Response returned a different token.");
             errorMessageBuilder.append(messages.getProperty("error.token"));
         }
 
