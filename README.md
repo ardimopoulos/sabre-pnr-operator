@@ -1,7 +1,7 @@
 # sabre-pnr-operator
 SOAP client handles PNRs (Passenger Name Records), consuming the Sabre web services in order to facilitate and automate travel agency services.
 
-The application periodically retrieves the PNRs and identifies which of them inquire a refund. Then it places the identified PNRs into a different queue.
+The application periodically retrieves the PNRs and identifies which of them requires a refund. Then it places the identified PNRs into a different queue.
 
 It provides a RESTful endpoint in order to expose the results of each process.
 
