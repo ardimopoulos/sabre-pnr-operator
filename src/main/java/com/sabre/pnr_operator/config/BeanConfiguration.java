@@ -1,9 +1,11 @@
 package com.sabre.pnr_operator.config;
 
+import com.sabre.pnr_operator.aop.logging.LoggingAspect;
 import com.sabre.pnr_operator.interceptor.SoapClientInterceptor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.ws.client.core.WebServiceTemplate;
@@ -14,6 +16,7 @@ import java.util.Properties;
 
 @Configuration
 @EnableScheduling
+@EnableAspectJAutoProxy
 public class BeanConfiguration {
 
     @Value(value = "${webservices.path}")
@@ -59,5 +62,8 @@ public class BeanConfiguration {
         return messages;
     }
 
-
+    @Bean
+    public LoggingAspect loggingAspect() {
+        return new LoggingAspect();
+    }
 }
