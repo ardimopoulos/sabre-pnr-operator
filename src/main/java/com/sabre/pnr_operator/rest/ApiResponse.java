@@ -17,7 +17,7 @@ public class ApiResponse {
     Map<String, Response> scheduledTask;
 
     @PostConstruct
-    private void intialize() {
+    private void initialize() {
         scheduledTask = new LinkedHashMap<>();
     }
 }
