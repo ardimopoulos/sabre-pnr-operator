@@ -12,11 +12,8 @@ import com.sabre.web_services.queueAccessLLS2_0_9.queueAccessLLS2_0_9RS.QueueAcc
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.ws.client.core.WebServiceTemplate;
-import org.springframework.ws.soap.SoapHeader;
 import org.springframework.ws.soap.SoapMessage;
-import org.springframework.ws.support.MarshallingUtils;
 
-import javax.xml.datatype.DatatypeConfigurationException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Properties;
@@ -45,7 +42,7 @@ public class QueueAccessHandler extends AbstractHandler {
         QueueAccessRS queueAccessRS;
 
         try {
-            SoapMessage soapResponse = sendAndReceive(getQueueAccessRQ());
+            SoapMessage soapResponse = sendAndReceive(getQueueAccessRQ(), QUEUE_ACCESS_LLS);
 
             queueAccessRS = (QueueAccessRS) webServiceTemplate.getUnmarshaller()
                     .unmarshal(soapResponse.getPayloadSource());
@@ -81,24 +78,6 @@ public class QueueAccessHandler extends AbstractHandler {
         queueList.setQueueListParagraph(queueAccessRS.getParagraph().getText());
 
         return getSuccessfulResponse(messages.getProperty("queue.access.success"), queueAccessRS.getApplicationResults().getStatus().value());
-    }
-
-    private SoapMessage sendAndReceive(QueueAccessRQ queueAccessRQ) {
-        return webServiceTemplate.sendAndReceive(
-                webServiceMessage -> {
-                    SoapHeader soapHeader = ((SoapMessage) webServiceMessage).getSoapHeader();
-
-                    try {
-                        webServiceTemplate.getMarshaller().marshal(messageHeaderRq.getMessageHeader(QUEUE_ACCESS_LLS), soapHeader.getResult());
-                    } catch (DatatypeConfigurationException e) {
-                        log.info("Caught DatatypeConfigurationException: " + e.getMessage());
-                    }
-
-                    webServiceTemplate.getMarshaller().marshal(securityRq.getSecurityHeader(), soapHeader.getResult());
-                    MarshallingUtils.marshal(webServiceTemplate.getMarshaller(), queueAccessRQ, webServiceMessage);
-                },
-                webServiceMessage -> (SoapMessage) webServiceMessage
-        );
     }
 
     private QueueAccessRQ getQueueAccessRQ() {

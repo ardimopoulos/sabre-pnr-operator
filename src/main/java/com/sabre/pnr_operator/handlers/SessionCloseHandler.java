@@ -10,11 +10,8 @@ import com.sabre.web_services.sessionClose.sessionCloseRS.SessionCloseRS;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.ws.client.core.WebServiceTemplate;
-import org.springframework.ws.soap.SoapHeader;
 import org.springframework.ws.soap.SoapMessage;
-import org.springframework.ws.support.MarshallingUtils;
 
-import javax.xml.datatype.DatatypeConfigurationException;
 import java.util.Properties;
 
 import static com.sabre.pnr_operator.constants.HandlerConstants.APPROVED;
@@ -37,7 +34,7 @@ public class SessionCloseHandler extends AbstractHandler {
         SessionCloseRS sessionCloseRS;
 
         try {
-            SoapMessage soapResponse = sendAndReceive(getSessionCloseRQ());
+            SoapMessage soapResponse = sendAndReceive(getSessionCloseRQ(), SESSION_CLOSE);
 
             sessionCloseRS = (SessionCloseRS) webServiceTemplate.getUnmarshaller()
                     .unmarshal(soapResponse.getPayloadSource());
@@ -66,24 +63,6 @@ public class SessionCloseHandler extends AbstractHandler {
 
         return getSuccessfulResponse(messages.getProperty("session.close.success"),
                 messages.getProperty("session.approved"));
-    }
-
-    private SoapMessage sendAndReceive(SessionCloseRQ sessionCloseRQ) {
-        return webServiceTemplate.sendAndReceive(
-                webServiceMessage -> {
-                    SoapHeader soapHeader = ((SoapMessage) webServiceMessage).getSoapHeader();
-
-                    try {
-                        webServiceTemplate.getMarshaller().marshal(messageHeaderRq.getMessageHeader(SESSION_CLOSE), soapHeader.getResult());
-                    } catch (DatatypeConfigurationException e) {
-                        log.info("Caught DatatypeConfigurationException: " + e.getMessage());
-                    }
-
-                    webServiceTemplate.getMarshaller().marshal(securityRq.getSecurityHeader(), soapHeader.getResult());
-                    MarshallingUtils.marshal(webServiceTemplate.getMarshaller(), sessionCloseRQ, webServiceMessage);
-                },
-                webServiceMessage -> (SoapMessage) webServiceMessage
-        );
     }
 
     private SessionCloseRQ getSessionCloseRQ() {

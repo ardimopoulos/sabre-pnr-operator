@@ -1,6 +1,7 @@
 package com.sabre.pnr_operator.handlers;
 
 import com.sabre.pnr_operator.config.properties.HeaderProperties;
+import com.sabre.pnr_operator.enums.Action;
 import com.sabre.pnr_operator.headers.message_header.MessageHeaderRq;
 import com.sabre.pnr_operator.headers.security_header.SecurityHeaderRq;
 import com.sabre.pnr_operator.responses.Response;
@@ -9,7 +10,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.ws.client.core.WebServiceTemplate;
 import org.springframework.ws.client.core.support.WebServiceGatewaySupport;
 import org.springframework.ws.soap.SoapFault;
+import org.springframework.ws.soap.SoapHeader;
+import org.springframework.ws.soap.SoapMessage;
+import org.springframework.ws.support.MarshallingUtils;
 
+import javax.xml.datatype.DatatypeConfigurationException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Properties;
@@ -73,4 +78,21 @@ public abstract class AbstractHandler extends WebServiceGatewaySupport implement
                 .setTimestamp(LocalDateTime.now());
     }
 
+    <T> SoapMessage sendAndReceive(T t, Action action) {
+        return webServiceTemplate.sendAndReceive(
+                webServiceMessage -> {
+                    SoapHeader soapHeader = ((SoapMessage) webServiceMessage).getSoapHeader();
+
+                    try {
+                        webServiceTemplate.getMarshaller().marshal(messageHeaderRq.getMessageHeader(action), soapHeader.getResult());
+                    } catch (DatatypeConfigurationException ex) {
+                        log.info("Caught DatatypeConfigurationException: " + ex.getMessage());
+                    }
+
+                    webServiceTemplate.getMarshaller().marshal(securityRq.getSecurityHeader(), soapHeader.getResult());
+                    MarshallingUtils.marshal(webServiceTemplate.getMarshaller(), t, webServiceMessage);
+                },
+                webServiceMessage -> (SoapMessage) webServiceMessage
+        );
+    }
 }

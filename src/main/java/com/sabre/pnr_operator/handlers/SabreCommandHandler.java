@@ -11,11 +11,8 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.ws.client.core.WebServiceTemplate;
-import org.springframework.ws.soap.SoapHeader;
 import org.springframework.ws.soap.SoapMessage;
-import org.springframework.ws.support.MarshallingUtils;
 
-import javax.xml.datatype.DatatypeConfigurationException;
 import java.time.LocalDateTime;
 import java.util.Properties;
 
@@ -41,7 +38,7 @@ public class SabreCommandHandler extends AbstractHandler {
         SabreCommandLLSRS sabreCommandLLSRS;
 
         try {
-            SoapMessage soapResponse = sendAndReceive(getSabreCommandLLSRQ());
+            SoapMessage soapResponse = sendAndReceive(getSabreCommandLLSRQ(), SABRE_COMMAND_LLS);
 
             sabreCommandLLSRS = (SabreCommandLLSRS) webServiceTemplate.getUnmarshaller()
                     .unmarshal(soapResponse.getPayloadSource());
@@ -62,24 +59,6 @@ public class SabreCommandHandler extends AbstractHandler {
 
         return getSuccessfulResponse(messages.getProperty("command.success"),
                 sabreCommandLLSRS.getResponse());
-    }
-
-    private SoapMessage sendAndReceive(SabreCommandLLSRQ sabreCommandLLSRQ) {
-        return webServiceTemplate.sendAndReceive(
-                webServiceMessage  -> {
-                    SoapHeader soapHeader = ((SoapMessage) webServiceMessage).getSoapHeader();
-
-                    try {
-                        webServiceTemplate.getMarshaller().marshal(messageHeaderRq.getMessageHeader(SABRE_COMMAND_LLS), soapHeader.getResult());
-                    } catch (DatatypeConfigurationException e) {
-                        log.info("Caught DatatypeConfigurationException: " + e.getMessage());
-                    }
-
-                    webServiceTemplate.getMarshaller().marshal(securityRq.getSecurityHeader(), soapHeader.getResult());
-                    MarshallingUtils.marshal(webServiceTemplate.getMarshaller(), sabreCommandLLSRQ, webServiceMessage);
-                },
-                webServiceMessage -> (SoapMessage) webServiceMessage
-        );
     }
 
     private SabreCommandLLSRQ getSabreCommandLLSRQ() {

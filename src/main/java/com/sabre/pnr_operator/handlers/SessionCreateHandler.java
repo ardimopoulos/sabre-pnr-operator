@@ -12,11 +12,8 @@ import com.sabre.web_services.wsse.Security;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.ws.client.core.WebServiceTemplate;
-import org.springframework.ws.soap.SoapHeader;
 import org.springframework.ws.soap.SoapMessage;
-import org.springframework.ws.support.MarshallingUtils;
 
-import javax.xml.datatype.DatatypeConfigurationException;
 import java.util.Properties;
 
 import static com.sabre.pnr_operator.constants.HandlerConstants.APPROVED;
@@ -39,7 +36,7 @@ public class SessionCreateHandler extends AbstractHandler {
         SessionCreateRS sessionCreateRS;
 
         try {
-            SoapMessage soapResponse = sendAndReceive(getSessionCreateRQ());
+            SoapMessage soapResponse = sendAndReceive(getSessionCreateRQ(), SESSION_CREATE);
 
             sessionCreateRS = (SessionCreateRS) webServiceTemplate.getUnmarshaller()
                     .unmarshal(soapResponse.getPayloadSource());
@@ -75,24 +72,6 @@ public class SessionCreateHandler extends AbstractHandler {
         log.info("Successfully retrieved SessionCreate Response.");
 
         return getSuccessfulResponse(messages.getProperty("session.open.success"), messages.getProperty("session.approved"));
-    }
-
-    private SoapMessage sendAndReceive(SessionCreateRQ sessionCreateRQ) {
-        return webServiceTemplate.sendAndReceive(
-                webServiceMessage -> {
-                    SoapHeader soapHeader = ((SoapMessage) webServiceMessage).getSoapHeader();
-
-                    try {
-                        webServiceTemplate.getMarshaller().marshal(messageHeaderRq.getMessageHeader(SESSION_CREATE), soapHeader.getResult());
-                    } catch (DatatypeConfigurationException e) {
-                        log.info("Caught DatatypeConfigurationException: " + e.getMessage());
-                    }
-
-                    webServiceTemplate.getMarshaller().marshal(securityRq.getSessionSecurityHeader(), soapHeader.getResult());
-                    MarshallingUtils.marshal(webServiceTemplate.getMarshaller(), sessionCreateRQ, webServiceMessage);
-                },
-                webServiceMessage -> (SoapMessage) webServiceMessage
-        );
     }
 
     private SessionCreateRQ getSessionCreateRQ() {
