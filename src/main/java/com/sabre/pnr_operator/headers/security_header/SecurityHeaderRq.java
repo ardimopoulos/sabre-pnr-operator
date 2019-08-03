@@ -14,10 +14,6 @@ public class SecurityHeaderRq {
 
     private HeaderProperties headerProperties;
 
-    public SecurityHeaderRq(HeaderProperties headerProperties) {
-        this.headerProperties = headerProperties;
-    }
-
     @Value(value = "${security.username}")
     private String username;
 
@@ -27,6 +23,10 @@ public class SecurityHeaderRq {
     @Setter
     @Getter
     private String token;
+
+    public SecurityHeaderRq(HeaderProperties headerProperties) {
+        this.headerProperties = headerProperties;
+    }
 
     public Security getSessionSecurityHeader() {
         Security security = new Security();
