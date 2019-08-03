@@ -9,7 +9,6 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ws.client.core.WebServiceTemplate;
 import org.springframework.ws.client.core.support.WebServiceGatewaySupport;
-import org.springframework.ws.soap.SoapFault;
 import org.springframework.ws.soap.SoapHeader;
 import org.springframework.ws.soap.SoapMessage;
 import org.springframework.ws.support.MarshallingUtils;
@@ -19,7 +18,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Properties;
 
-import static com.sabre.pnr_operator.constants.HandlerConstants.*;
 import static com.sabre.pnr_operator.enums.FaultyElement.*;
 
 @AllArgsConstructor
@@ -32,7 +30,7 @@ public abstract class AbstractHandler extends WebServiceGatewaySupport implement
     SecurityHeaderRq securityRq;
     Properties messages;
 
-    Response getFaultyResponseBasedOnInvalidHeaders (List<Enum> invalidHeaderReasons) {
+    public String getMessageBasedOnInvalidHeaders(List<Enum> invalidHeaderReasons) {
         StringBuilder errorMessageBuilder = new StringBuilder();
 
         if (invalidHeaderReasons.contains(CONVERSATION_ID)) {
@@ -50,35 +48,27 @@ public abstract class AbstractHandler extends WebServiceGatewaySupport implement
             errorMessageBuilder.append(messages.getProperty("error.token"));
         }
 
-        return getFaultyResponse(FAIL, messages.getProperty(ERROR_DESC), errorMessageBuilder.toString());
+        return errorMessageBuilder.toString();
     }
 
-    Response getFaultyResponse(String status, String description, String errorMessage) {
+    Response getResponse(boolean isSuccess, String status, String description, String message) {
         return new Response()
-                .setSuccess(false)
+                .setSuccess(isSuccess)
                 .setStatus(status)
-                .setDescription(description)
-                .setMessage(errorMessage)
-                .setTimestamp(LocalDateTime.now());
-    }
-
-    Response getFaultyResponse(SoapFault faultResponse) {
-        return getFaultyResponse(faultResponse.getFaultCode().getLocalPart(),
-                faultResponse.getFaultStringOrReason(),
-                faultResponse.addFaultDetail().getSource().toString()
-        );
-    }
-
-    Response getSuccessfulResponse(String description, String message) {
-        return new Response()
-                .setSuccess(true)
-                .setStatus(SUCCESS)
                 .setDescription(description)
                 .setMessage(message)
                 .setTimestamp(LocalDateTime.now());
     }
 
-    <T> SoapMessage sendAndReceive(T t, Action action) {
+    Response getSuccessResponse(String status, String description, String message) {
+        return getResponse(true, status, description, message);
+    }
+
+    Response getErrorResponse(String status, String description, String message) {
+        return getResponse(false, status, description, message);
+    }
+
+    public <T> SoapMessage sendAndReceive(T t, Action action) {
         return webServiceTemplate.sendAndReceive(
                 webServiceMessage -> {
                     SoapHeader soapHeader = ((SoapMessage) webServiceMessage).getSoapHeader();
