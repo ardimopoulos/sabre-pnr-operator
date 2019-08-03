@@ -14,8 +14,8 @@ import static com.sabre.pnr_operator.constants.HandlerConstants.ERROR;
 public class LoggingAspect {
 
     @Pointcut("within(com.sabre.pnr_operator.handlers..*) " +
-            "|| within(com.sabre.pnr_operator.headers..*)) " +
-            "|| within(com.sabre.pnr_operator.ScheduledTask..*)")
+            "|| within(com.sabre.pnr_operator.headers..*) " +
+            "|| execution(* com.sabre.pnr_operator.ScheduledTask.*())")
     public void allMethodsPointcut() {}
 
     @Before("allMethodsPointcut()")
