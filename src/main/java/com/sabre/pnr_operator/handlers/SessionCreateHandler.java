@@ -16,8 +16,7 @@ import org.springframework.ws.soap.SoapMessage;
 
 import java.util.Properties;
 
-import static com.sabre.pnr_operator.constants.HandlerConstants.APPROVED;
-import static com.sabre.pnr_operator.constants.HandlerConstants.ERROR;
+import static com.sabre.pnr_operator.constants.HandlerConstants.*;
 import static com.sabre.pnr_operator.enums.Action.SESSION_CREATE;
 import static com.sabre.pnr_operator.utils.Utilities.getHeaderElement;
 
@@ -32,7 +31,6 @@ public class SessionCreateHandler extends AbstractHandler {
     }
 
     public Response processRequest() {
-        log.info("SessionCreate request process is starting...");
         SessionCreateRS sessionCreateRS;
 
         try {
@@ -42,8 +40,7 @@ public class SessionCreateHandler extends AbstractHandler {
                     .unmarshal(soapResponse.getPayloadSource());
 
             if (!APPROVED.equals(sessionCreateRS.getStatus())) {
-                log.error("Status returned from the web service response is different than Approved.");
-                return getFaultyResponse(sessionCreateRS.getStatus(),
+                return getResponse(false, sessionCreateRS.getStatus(),
                         messages.getProperty("session.create.disapproved"),
                         messages.getProperty("session.error.status")
                 );
@@ -58,20 +55,18 @@ public class SessionCreateHandler extends AbstractHandler {
             ResponseHeaderValidator responseHeaderValidator = new ResponseHeaderValidator(headerProperties);
 
             if (responseHeaderValidator.containInvalidHeaders(messageHeader, security)) {
-                return getFaultyResponseBasedOnInvalidHeaders(responseHeaderValidator.getInvalidHeaderReasons());
+                return getErrorResponse(FAIL, messages.getProperty(ERROR_DESC),
+                        getMessageBasedOnInvalidHeaders(responseHeaderValidator.getInvalidHeaderReasons()));
             }
 
             securityRq.setToken(security.getBinarySecurityToken());
 
         } catch (Exception e) {
-            log.error("Exception while opening session: " + e);
-            return getFaultyResponse(ERROR, messages.getProperty("session.error.open"),
+            return getErrorResponse(ERROR, messages.getProperty("session.error.open"),
                         messages.getProperty("error.general") + e.getMessage());
         }
 
-        log.info("Successfully retrieved SessionCreate Response.");
-
-        return getSuccessfulResponse(messages.getProperty("session.open.success"), messages.getProperty("session.approved"));
+        return getSuccessResponse(SUCCESS, messages.getProperty("session.open.success"), messages.getProperty("session.approved"));
     }
 
     private SessionCreateRQ getSessionCreateRQ() {

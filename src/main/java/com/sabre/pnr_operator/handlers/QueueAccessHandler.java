@@ -9,7 +9,6 @@ import com.sabre.pnr_operator.responses.Response;
 import com.sabre.pnr_operator.utils.ResponseHeaderValidator;
 import com.sabre.web_services.queueAccessLLS2_0_9.queueAccessLLS2_0_9RQ.QueueAccessRQ;
 import com.sabre.web_services.queueAccessLLS2_0_9.queueAccessLLS2_0_9RS.QueueAccessRS;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.ws.client.core.WebServiceTemplate;
 import org.springframework.ws.soap.SoapMessage;
@@ -18,12 +17,11 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Properties;
 
-import static com.sabre.pnr_operator.constants.HandlerConstants.ERROR;
+import static com.sabre.pnr_operator.constants.HandlerConstants.*;
 import static com.sabre.pnr_operator.enums.Action.QUEUE_ACCESS_LLS;
 import static java.lang.Boolean.TRUE;
 
 @Component
-@Slf4j
 public class QueueAccessHandler extends AbstractHandler {
 
     private QueueList queueList;
@@ -38,7 +36,6 @@ public class QueueAccessHandler extends AbstractHandler {
 
     @Override
     public Response processRequest() {
-        log.info("QueueAccessHandler request is being proceed...");
         QueueAccessRS queueAccessRS;
 
         try {
@@ -50,15 +47,14 @@ public class QueueAccessHandler extends AbstractHandler {
             ResponseHeaderValidator responseHeaderValidator = new ResponseHeaderValidator(headerProperties);
 
             if (responseHeaderValidator.containInvalidHeaders(soapResponse, securityRq, webServiceTemplate.getUnmarshaller())) {
-                return getFaultyResponseBasedOnInvalidHeaders(responseHeaderValidator.getInvalidHeaderReasons());
+                return getErrorResponse(FAIL, messages.getProperty(ERROR_DESC),
+                        getMessageBasedOnInvalidHeaders(responseHeaderValidator.getInvalidHeaderReasons()));
             }
 
         } catch (Exception e) {
-            log.error("Exception while processing the QueueAccessHandler: " + e.getMessage());
-            return getFaultyResponse(ERROR, messages.getProperty("queue.access.error"), messages.getProperty("error.general") + e.getMessage());
+            return getErrorResponse(ERROR, messages.getProperty("queue.access.error"),
+                    messages.getProperty("error.general") + e.getMessage());
         }
-
-        log.info("Successfully retrieved QueueAccess Response.");
 
         ArrayList<QueueLine> queueLineList = new ArrayList<>();
 
@@ -77,7 +73,7 @@ public class QueueAccessHandler extends AbstractHandler {
         queueList.setQueueLineList(queueLineList);
         queueList.setQueueListParagraph(queueAccessRS.getParagraph().getText());
 
-        return getSuccessfulResponse(messages.getProperty("queue.access.success"), queueAccessRS.getApplicationResults().getStatus().value());
+        return getSuccessResponse(SUCCESS, messages.getProperty("queue.access.success"), queueAccessRS.getApplicationResults().getStatus().value());
     }
 
     private QueueAccessRQ getQueueAccessRQ() {
