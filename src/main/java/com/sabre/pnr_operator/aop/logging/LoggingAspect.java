@@ -34,7 +34,7 @@ public class LoggingAspect {
                 e.getCause(),
                 e.getMessage());
 
-        e.printStackTrace();
+        Arrays.asList(e.getStackTrace()).forEach(s -> log.error(s.toString()));
     }
 
     @Pointcut("execution(* *..ScheduledTask.runTask())")
