@@ -2,6 +2,7 @@ package com.sabre.pnr_operator.handlers;
 
 import com.sabre.pnr_operator.config.properties.HeaderProperties;
 import com.sabre.pnr_operator.enums.Action;
+import com.sabre.pnr_operator.enums.FaultyElement;
 import com.sabre.pnr_operator.headers.message_header.MessageHeaderRq;
 import com.sabre.pnr_operator.headers.security_header.SecurityHeaderRq;
 import com.sabre.pnr_operator.responses.Response;
@@ -30,7 +31,7 @@ public abstract class AbstractHandler extends WebServiceGatewaySupport implement
     SecurityHeaderRq securityRq;
     Properties messages;
 
-    public String getMessageBasedOnInvalidHeaders(List<Enum> invalidHeaderReasons) {
+    public String getMessageBasedOnInvalidHeaders(List<FaultyElement> invalidHeaderReasons) {
         StringBuilder errorMessageBuilder = new StringBuilder();
 
         if (invalidHeaderReasons.contains(CONVERSATION_ID)) {

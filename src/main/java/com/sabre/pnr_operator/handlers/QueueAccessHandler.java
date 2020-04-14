@@ -25,13 +25,19 @@ import static java.lang.Boolean.TRUE;
 public class QueueAccessHandler extends AbstractHandler {
 
     private QueueList queueList;
+    private ResponseHeaderValidator responseHeaderValidator;
 
-    public QueueAccessHandler(WebServiceTemplate webServiceTemplate, HeaderProperties headerProperties,
-                              MessageHeaderRq messageHeaderRq, SecurityHeaderRq securityRq,
-                              Properties messages, QueueList queueList) {
+    public QueueAccessHandler(WebServiceTemplate webServiceTemplate, ResponseHeaderValidator responseHeaderValidator,
+                              HeaderProperties headerProperties, MessageHeaderRq messageHeaderRq,
+                              SecurityHeaderRq securityRq, QueueList queueList,
+                              Properties messages) {
 
         super(webServiceTemplate, headerProperties, messageHeaderRq, securityRq, messages);
+
         this.queueList = queueList;
+
+        this.responseHeaderValidator = responseHeaderValidator;
+        this.responseHeaderValidator.setHeaderProperties(headerProperties);
     }
 
     @Override
@@ -43,8 +49,6 @@ public class QueueAccessHandler extends AbstractHandler {
 
             queueAccessRS = (QueueAccessRS) webServiceTemplate.getUnmarshaller()
                     .unmarshal(soapResponse.getPayloadSource());
-
-            ResponseHeaderValidator responseHeaderValidator = new ResponseHeaderValidator(headerProperties);
 
             if (responseHeaderValidator.containInvalidHeaders(soapResponse, securityRq, webServiceTemplate.getUnmarshaller())) {
                 return getErrorResponse(FAIL, messages.getProperty(ERROR_DESC),

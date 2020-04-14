@@ -19,10 +19,15 @@ import static com.sabre.pnr_operator.enums.Action.SESSION_CLOSE;
 @Component
 public class SessionCloseHandler extends AbstractHandler {
 
+    private ResponseHeaderValidator responseHeaderValidator;
+
     public SessionCloseHandler(WebServiceTemplate webServiceTemplate, HeaderProperties headerProperties, MessageHeaderRq messageHeaderRq,
-                               SecurityHeaderRq securityRq, Properties messages) {
+                               SecurityHeaderRq securityRq, Properties messages, ResponseHeaderValidator responseHeaderValidator) {
 
         super(webServiceTemplate, headerProperties, messageHeaderRq, securityRq, messages);
+
+        this.responseHeaderValidator = responseHeaderValidator;
+        this.responseHeaderValidator.setHeaderProperties(headerProperties);
     }
 
     @Override
@@ -41,8 +46,6 @@ public class SessionCloseHandler extends AbstractHandler {
                         messages.getProperty("session.error.status")
                 );
             }
-
-            ResponseHeaderValidator responseHeaderValidator = new ResponseHeaderValidator(headerProperties);
 
             if (responseHeaderValidator.containInvalidHeaders(soapResponse, securityRq, webServiceTemplate.getUnmarshaller())) {
                 return getErrorResponse(FAIL, messages.getProperty(ERROR_DESC),

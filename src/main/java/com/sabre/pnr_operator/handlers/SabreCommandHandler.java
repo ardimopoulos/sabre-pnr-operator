@@ -23,11 +23,15 @@ public class SabreCommandHandler extends AbstractHandler {
 
     @Setter
     private String command;
+    private ResponseHeaderValidator responseHeaderValidator;
 
     public SabreCommandHandler(WebServiceTemplate webServiceTemplate, HeaderProperties headerProperties, MessageHeaderRq messageHeaderRq,
-                               SecurityHeaderRq securityRq, Properties messages) {
+                               SecurityHeaderRq securityRq, Properties messages, ResponseHeaderValidator responseHeaderValidator) {
 
         super(webServiceTemplate, headerProperties, messageHeaderRq, securityRq, messages);
+
+        this.responseHeaderValidator = responseHeaderValidator;
+        this.responseHeaderValidator.setHeaderProperties(headerProperties);
     }
 
     @Override
@@ -39,8 +43,6 @@ public class SabreCommandHandler extends AbstractHandler {
 
             sabreCommandLLSRS = (SabreCommandLLSRS) webServiceTemplate.getUnmarshaller()
                     .unmarshal(soapResponse.getPayloadSource());
-
-            ResponseHeaderValidator responseHeaderValidator = new ResponseHeaderValidator(headerProperties);
 
             if (responseHeaderValidator.containInvalidHeaders(soapResponse, securityRq, webServiceTemplate.getUnmarshaller())) {
                 return getErrorResponse(FAIL, messages.getProperty(ERROR_DESC),

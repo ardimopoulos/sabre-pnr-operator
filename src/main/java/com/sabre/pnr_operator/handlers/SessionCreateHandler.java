@@ -24,10 +24,15 @@ import static com.sabre.pnr_operator.utils.Utilities.getHeaderElement;
 @Slf4j
 public class SessionCreateHandler extends AbstractHandler {
 
+    private ResponseHeaderValidator responseHeaderValidator;
+
     public SessionCreateHandler(WebServiceTemplate webServiceTemplate, HeaderProperties headerProperties, MessageHeaderRq messageHeaderRq,
-                                SecurityHeaderRq securityRq, Properties messages) {
+                                SecurityHeaderRq securityRq, Properties messages, ResponseHeaderValidator responseHeaderValidator) {
 
         super(webServiceTemplate, headerProperties, messageHeaderRq, securityRq, messages);
+
+        this.responseHeaderValidator = responseHeaderValidator;
+        this.responseHeaderValidator.setHeaderProperties(headerProperties);
     }
 
     public Response processRequest() {
@@ -51,8 +56,6 @@ public class SessionCreateHandler extends AbstractHandler {
 
             Security security = (Security) getHeaderElement(soapResponse.getSoapHeader(),
                     webServiceTemplate.getUnmarshaller(),  Security.class);
-
-            ResponseHeaderValidator responseHeaderValidator = new ResponseHeaderValidator(headerProperties);
 
             if (responseHeaderValidator.containInvalidHeaders(messageHeader, security)) {
                 return getErrorResponse(FAIL, messages.getProperty(ERROR_DESC),
