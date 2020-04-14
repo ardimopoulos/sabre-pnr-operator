@@ -15,9 +15,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Iterator;
 
-public class Utilities {
+public final class Utilities {
 
-    private Utilities(){}
+    private Utilities(){
+        throw new UnsupportedOperationException("Cannot instantiate utility class:" + Utilities.class.getSimpleName());
+    }
 
     public static Object getHeaderElement(SoapHeader header, Unmarshaller unmarshaller, Class className) throws IOException {
         Object headerElement = null;

@@ -1,6 +1,6 @@
 package com.sabre.pnr_operator.constants;
 
-public class HandlerConstants {
+public final class HandlerConstants {
 
     public static final String ERROR_DESC = "error.desc";
     public static final String APPROVED = "Approved";
@@ -8,5 +8,7 @@ public class HandlerConstants {
     public static final String ERROR = "error";
     public static final String FAIL = "fail";
 
-    private HandlerConstants() {}
+    private HandlerConstants() {
+        throw new UnsupportedOperationException("Cannot instantiate constant class:" + HandlerConstants.class.getSimpleName());
+    }
 }
