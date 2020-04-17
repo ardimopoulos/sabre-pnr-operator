@@ -6,6 +6,7 @@ import com.sabre.pnr_operator.enums.FaultyElement;
 import com.sabre.pnr_operator.headers.message_header.MessageHeaderRq;
 import com.sabre.pnr_operator.headers.security_header.SecurityHeaderRq;
 import com.sabre.pnr_operator.responses.Response;
+import com.sabre.web_services.wsse.Security;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ws.client.core.WebServiceTemplate;
@@ -19,6 +20,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Properties;
 
+import static com.sabre.pnr_operator.enums.Action.SESSION_CREATE;
 import static com.sabre.pnr_operator.enums.FaultyElement.*;
 
 @AllArgsConstructor
@@ -80,7 +82,9 @@ public abstract class AbstractHandler extends WebServiceGatewaySupport implement
                         log.info("Caught DatatypeConfigurationException: " + ex.getMessage());
                     }
 
-                    webServiceTemplate.getMarshaller().marshal(securityRq.getSecurityHeader(), soapHeader.getResult());
+                    Security securityHeader = action == SESSION_CREATE ? securityRq.getSessionSecurityHeader() : securityRq.getSecurityHeader();
+
+                    webServiceTemplate.getMarshaller().marshal(securityHeader, soapHeader.getResult());
                     MarshallingUtils.marshal(webServiceTemplate.getMarshaller(), t, webServiceMessage);
                 },
                 webServiceMessage -> (SoapMessage) webServiceMessage
