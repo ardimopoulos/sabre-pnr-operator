@@ -1,27 +1,24 @@
 package com.sabre.pnr_operator.config.properties;
 
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
+import java.beans.ConstructorProperties;
+
 @Getter
+@Setter
 @Component
-@PropertySource("classpath:header.properties")
+@ConfigurationProperties(prefix = "header")
 public class HeaderProperties {
-
-    @Value(value = "${messageHeader.conversationId}")
     private String conversationId;
-
-    @Value(value = "${messageHeader.messageId}")
     private String messageId;
-
-    @Value(value = "${messageHeader.from.partyId}")
     private String fromPartyId;
-
-    @Value(value = "${messageHeader.to.partyId}")
     private String toPartyId;
-
-    @Value(value = "${messageHeader.cpaid}")
     private String cpaid;
+    private String username;
+    private String password;
 }
