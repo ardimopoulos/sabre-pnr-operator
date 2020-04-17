@@ -14,12 +14,6 @@ public class SecurityHeaderRq {
 
     private HeaderProperties headerProperties;
 
-    @Value(value = "${security.username}")
-    private String username;
-
-    @Value(value = "${security.password}")
-    private String password;
-
     @Setter
     @Getter
     private String token;
@@ -31,8 +25,8 @@ public class SecurityHeaderRq {
     public Security getSessionSecurityHeader() {
         Security security = new Security();
         Security.UsernameToken usernameToken = new Security.UsernameToken();
-        usernameToken.setUsername(username);
-        usernameToken.setPassword(password);
+        usernameToken.setUsername(headerProperties.getUsername());
+        usernameToken.setPassword(headerProperties.getPassword());
         usernameToken.setOrganization(headerProperties.getCpaid());
         usernameToken.setDomain("DEFAULT");
         security.setUsernameToken(usernameToken);
