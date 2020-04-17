@@ -54,7 +54,7 @@ public class SabreCommandHandler extends AbstractHandler {
                     messages.getProperty("error.general") + e.getMessage());
         }
 
-        return getSuccessResponse(SUCCESS, messages.getProperty("command.success"),
+        return getSuccessResponse(messages.getProperty("command.success"),
                 sabreCommandLLSRS.getResponse());
     }
 

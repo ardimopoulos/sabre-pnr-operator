@@ -69,7 +69,7 @@ public class SessionCreateHandler extends AbstractHandler {
                         messages.getProperty("error.general") + e.getMessage());
         }
 
-        return getSuccessResponse(SUCCESS, messages.getProperty("session.open.success"), messages.getProperty("session.approved"));
+        return getSuccessResponse(messages.getProperty("session.open.success"), messages.getProperty("session.approved"));
     }
 
     private SessionCreateRQ getSessionCreateRQ() {

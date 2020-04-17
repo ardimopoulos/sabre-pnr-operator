@@ -20,6 +20,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Properties;
 
+import static com.sabre.pnr_operator.constants.HandlerConstants.SUCCESS;
 import static com.sabre.pnr_operator.enums.Action.SESSION_CREATE;
 import static com.sabre.pnr_operator.enums.FaultyElement.*;
 
@@ -63,8 +64,8 @@ public abstract class AbstractHandler extends WebServiceGatewaySupport implement
                 .setTimestamp(LocalDateTime.now());
     }
 
-    Response getSuccessResponse(String status, String description, String message) {
-        return getResponse(true, status, description, message);
+    Response getSuccessResponse(String description, String message) {
+        return getResponse(true, SUCCESS, description, message);
     }
 
     Response getErrorResponse(String status, String description, String message) {

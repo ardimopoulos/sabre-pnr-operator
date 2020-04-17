@@ -77,7 +77,7 @@ public class QueueAccessHandler extends AbstractHandler {
         queueList.setQueueLineList(queueLineList);
         queueList.setQueueListParagraph(queueAccessRS.getParagraph().getText());
 
-        return getSuccessResponse(SUCCESS, messages.getProperty("queue.access.success"), queueAccessRS.getApplicationResults().getStatus().value());
+        return getSuccessResponse(messages.getProperty("queue.access.success"), queueAccessRS.getApplicationResults().getStatus().value());
     }
 
     private QueueAccessRQ getQueueAccessRQ() {

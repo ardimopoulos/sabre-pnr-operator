@@ -57,7 +57,7 @@ public class SessionCloseHandler extends AbstractHandler {
                     messages.getProperty("error.general") + e.getMessage());
         }
 
-        return getSuccessResponse(SUCCESS, messages.getProperty("session.close.success"),
+        return getSuccessResponse(messages.getProperty("session.close.success"),
                 messages.getProperty("session.approved"));
     }
 
